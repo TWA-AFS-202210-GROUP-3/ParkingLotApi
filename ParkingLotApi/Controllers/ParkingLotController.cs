@@ -23,9 +23,25 @@ public class ParkingLotController : ControllerBase
         return "Hello World";
     }
 
-    [HttpPost]
-    public string AddParkingLot(ParkingLotDto parkingLotDto)
+    [HttpGet("{parkingLotId}")]
+    public async Task<ActionResult<ParkingLotDto>> GetById(int parkingLotId)
     {
-        return parkingLotService.AddOneParkingLot(parkingLotDto).ToString();
+        var parkingLotDto = await parkingLotService.GetById(parkingLotId);
+        return Ok(parkingLotDto);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
+    {
+        var parkingLotID = parkingLotService.AddOneParkingLot(parkingLotDto);
+        return CreatedAtAction(nameof(GetById), new { parkingLotId = parkingLotID }, parkingLotDto);
+    }
+
+
+    [HttpDelete]
+    [Route("{parkingLotID}")]
+    public Task<ActionResult> DeleteParkingLot([FromRoute] string parkingLotID)
+    {
+        return parkingLotService.DeleteOneParkingLot(parkingLotID);
     }
 }

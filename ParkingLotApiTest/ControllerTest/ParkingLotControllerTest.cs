@@ -38,7 +38,36 @@ namespace ParkingLotApiTest.ControllerTest
             var postResponse = await httpClient.PostAsync("/ParkingLots", requestBody);
 
             // then
-            Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+            var postResponseBody = await postResponse.Content.ReadAsStringAsync();
+            var parkingLotCreated = JsonConvert.DeserializeObject<ParkingLotDto>(postResponseBody);
+            Assert.Equal(parkingLotCreated.Name, parkingLotDto.Name);
+        }
+
+        [Fact]
+        public async Task Should_delete_parkingLot_successfully()
+        {
+            // given
+            var factory = new WebApplicationFactory<Program>();
+            var httpClient = factory.CreateClient();
+
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "ParkingLot1",
+                Capacity = 100,
+                Location = "North street No 1",
+            };
+            var parkingLotJson = JsonConvert.SerializeObject(parkingLotDto);
+            var requestBody = new StringContent(parkingLotJson, Encoding.UTF8, "application/json");
+            var postResponse = await httpClient.PostAsync("/ParkingLots", requestBody);
+            var postResponseBody = await postResponse.Content.ReadAsStringAsync();
+            string parkingLotID = JsonConvert.DeserializeObject<string>(postResponseBody);
+
+            // when
+            var deleteResponse = await httpClient.DeleteAsync($"/ParkingLots/{parkingLotID}");
+
+            // then
+            Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
         }
     }
 }
