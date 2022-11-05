@@ -24,9 +24,8 @@ public class ParkingLotController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<ParkingLotDto> AddParkingLot(ParkingLotDto parkingLotDto)
+    public string AddParkingLot(ParkingLotDto parkingLotDto)
     {
-        parkingLotService.AddOneParkingLot(parkingLotDto);
-        return new CreatedResult("/ParkingLots", parkingLotDto);
+        return parkingLotService.AddOneParkingLot(parkingLotDto).ToString();
     }
 }
