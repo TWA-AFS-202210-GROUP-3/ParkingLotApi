@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using ParkingLotApi.Dtos;
+using ParkingLotApi.Services;
 
 namespace ParkingLotApi.Controllers
 {
@@ -6,10 +10,18 @@ namespace ParkingLotApi.Controllers
     [Route("[controller]")]
     public class ParkingLotController : ControllerBase
     {
-        [HttpGet]
-        public string GetParkingLots()
+        private readonly ParkingLotService parkingLotService;
+
+        public ParkingLotController(ParkingLotService parkingLotService)
         {
-            return "Hello World";
+            this.parkingLotService = parkingLotService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<ParkingLotDto>>> GetParkingLots()
+        {
+            var parkingLotsDtos = await this.parkingLotService.GetAllParkingLots();
+            return Ok(parkingLotsDtos);
         }
     }
 }

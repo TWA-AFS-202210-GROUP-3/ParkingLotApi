@@ -1,19 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using ParkingLotApi;
-using Xunit;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace ParkingLotApiTest.ControllerTest
 {
-    using Microsoft.AspNetCore.Mvc.Testing;
-
-    public class HelloWorldControllerTest
+    public class ParkingLotsControllerTest
     {
-        public HelloWorldControllerTest()
-        {
-        }
-
         [Fact]
-        public async Task Should_get_hello_world()
+        public async Task Should_get_all_parking_lots()
         {
             var factory = new WebApplicationFactory<Program>();
             var client = factory.CreateClient();
