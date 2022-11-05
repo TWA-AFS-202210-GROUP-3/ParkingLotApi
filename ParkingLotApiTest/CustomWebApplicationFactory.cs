@@ -1,10 +1,10 @@
 ﻿namespace ParkingLotApiTest
 {
-    using ParkingLotApi.Repository;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
+    using ParkingLotApi.Repository;
     using System.Linq;
 
     public class CustomWebApplicationFactory<TStartup>
@@ -17,11 +17,11 @@
             {
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
-                         typeof(DbContextOptions<ParkingLotContext>));
+                         typeof(DbContextOptions<ParkingLotDbContext>));
 
                 services.Remove(descriptor);
 
-                services.AddDbContext<ParkingLotContext>(options =>
+                services.AddDbContext<ParkingLotDbContext>(options =>
                 {
                     options.UseInMemoryDatabase("InMemoryDbForTesting");
                 });
@@ -31,7 +31,7 @@
                 using (var scope = sp.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<ParkingLotContext>();
+                    var db = scopedServices.GetRequiredService<ParkingLotDbContext>();
                     db.Database.EnsureCreated();
                 }
             });

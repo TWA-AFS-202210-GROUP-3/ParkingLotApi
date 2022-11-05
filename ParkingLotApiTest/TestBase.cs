@@ -18,7 +18,7 @@ namespace ParkingLotApiTest
         {
             var scope = Factory.Services.CreateScope();
             var scopedServices = scope.ServiceProvider;
-            var context = scopedServices.GetRequiredService<ParkingLotContext>();
+            var context = scopedServices.GetRequiredService<ParkingLotDbContext>();
 
             //context.Employees.RemoveRange(context.Employees);
 

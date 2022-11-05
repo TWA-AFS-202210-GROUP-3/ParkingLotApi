@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ParkingLotApi.Dtos;
 using ParkingLotApi.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace ParkingLotApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ParkingLotController
+    public class ParkingLotController : ControllerBase
     {
-        private ParkingLotService parkingLotService;
+        private readonly ParkingLotService parkingLotService;
 
         public ParkingLotController(ParkingLotService parkingLotService)
         {
@@ -15,9 +18,22 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpPost]
-        public int AddParkingLot()
+        public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
         {
-            return parkingLotService.AddParkingLot();
+            var id = await parkingLotService.AddParkingLotAsync(parkingLotDto);
+            return CreatedAtAction(nameof(GetById), new { id = id }, parkingLotDto);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ParkingLotDto>> GetById([FromRoute]int id)
+        {
+            return Ok(await parkingLotService.GetById(id));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ParkingLotDto>> GetAll([FromRoute] int id)
+        {
+            return Ok(await parkingLotService.GetAll());
         }
     }
 }

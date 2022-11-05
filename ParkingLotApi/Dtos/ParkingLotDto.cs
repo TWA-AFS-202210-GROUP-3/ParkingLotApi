@@ -1,5 +1,6 @@
 ﻿using ParkingLotApi.Models;
-using ParkingLotApi.Repositories;
+using ParkingLotApi.Repository;
+using System;
 
 namespace ParkingLotApi.Dtos
 {
@@ -22,5 +23,15 @@ namespace ParkingLotApi.Dtos
         public int Capacity { get; set; }
 
         public string Location { get; set; }
+
+        public ParkingLotEntity ToEntity()
+        {
+            return new ParkingLotEntity()
+            {
+                Name = this.Name,
+                Capacity = this.Capacity,
+                Location = this.Location,
+            };
+        }
     }
 }
