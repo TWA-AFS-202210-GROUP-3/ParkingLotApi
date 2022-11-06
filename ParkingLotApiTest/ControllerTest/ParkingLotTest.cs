@@ -61,8 +61,10 @@ namespace ParkingLotApiTest.ControllerTest
             var postresponse = await client.PostAsync("/parkinglots", content);
 
             //when 
-            await client.DeleteAsync(postresponse.Headers.Location);
+            var deleterepsonse = await client.DeleteAsync(postresponse.Headers.Location);
+
             //Then
+            Assert.Equal(HttpStatusCode.NoContent, deleterepsonse.StatusCode);
 
         }
 
