@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkingLotApi.Dto;
+using ParkingLotApi.Exceptions;
 using ParkingLotApi.Model;
 using ParkingLotApi.Repository;
 using System;
@@ -27,7 +28,7 @@ namespace ParkingLotApi.Service
                 await dbContext.SaveChangesAsync();
                 return orderEntity.Id;
             }
-            return 0;
+            throw new ParkingLotFullEception("The parking lot is full");
         }
 
         public async Task<OrderDto> GetById(int orderId)
