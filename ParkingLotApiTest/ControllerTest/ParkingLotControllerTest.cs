@@ -5,6 +5,7 @@ namespace ParkingLotApiTest.ControllerTest
     using Microsoft.AspNetCore.Mvc.Testing;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Mime;
@@ -42,29 +43,35 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Single(parkinglots);
         }
 
-        //[Fact]
-        //public async Task Should_delete_parkinglot_success()
-        //{
-        //var client = GetClient();
-        //ParkingLotDto parkingLotDto = new ParkingLotDto
-        //{
-        //    Name = "CUP_NO.1",
-        //    Capacity = 100,
-        //    Location = "ZHONGSHI Road",
-        //};
+        [Fact]
+        public async Task Should_sold_parking_lot_successfully()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "hi",
+                Capacity = 1,
+                Location = "hihi",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
 
-        //    var httpContent = JsonConvert.SerializeObject(companyDto);
-        //    StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await client.PostAsync("/parkinglot", content);
+            var body = await response.Content.ReadAsStringAsync();
 
-        //    var response = await client.PostAsync("/parkinglot", content);
-        //    await client.DeleteAsync(response.Headers.Location);
-        //    var allCompaniesResponse = await client.GetAsync("/parkinglot");
-        //    var body = await allCompaniesResponse.Content.ReadAsStringAsync();
+            var id = JsonConvert.DeserializeObject<int>(body);
 
-        //    var returnCompanies = JsonConvert.DeserializeObject<List<CompanyDto>>(body);
+            //when
+            await client.DeleteAsync($"/parkinglot/{id}");
 
-        //    Assert.Empty(returnCompanies);
-        //}
+            // then
+            var allParkingLotsResponse = await client.GetAsync("/parkinglot");
+            var getbody = await allParkingLotsResponse.Content.ReadAsStringAsync();
+
+            var parkinglots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(getbody);
+            Assert.Equal(0, parkinglots.Count);
+        }
 
         //[Fact]
         //public async Task Should_create_many_companies_success()
