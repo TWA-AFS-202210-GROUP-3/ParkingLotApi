@@ -36,6 +36,21 @@ namespace ParkingLotApi.Services
             return companies.Select(ParkingLotEntity => new ParkingLotDto(ParkingLotEntity)).ToList();
         }
 
+        public async Task<ParkingLotDto> GetParkingLotById(long id)
+        {
+            var parkinglot = this.parkingLotContext.ParkingLots.FirstOrDefault(_ => _.Id == id);
+            return new ParkingLotDto(parkinglot);
+        }
+
+        public async Task DeleteParkingLot(int id)
+        {
+            var parkinglot = this.parkingLotContext.ParkingLots
+                .FirstOrDefault(_ => _.Id == id);
+
+            this.parkingLotContext.ParkingLots.Remove(parkinglot);
+            await this.parkingLotContext.SaveChangesAsync();
+        }
+
         private bool IsParkingLotNameExisted(ParkingLotEntity parkingLot)
         {
             var parkingLotInSystem = this.parkingLotContext.ParkingLots.FirstOrDefault(p => p.Name.Equals(parkingLot.Name));

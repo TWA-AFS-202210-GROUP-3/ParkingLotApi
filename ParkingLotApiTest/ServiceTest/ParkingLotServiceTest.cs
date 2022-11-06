@@ -14,7 +14,7 @@ public class ParkingLotServiceTest : TestBase
     }
 
     [Fact]
-    public async Task Should_buy_parking_lot_when_buy_a_new_parking_lot_when_capacity_larger_equal_to_zeroAsync()
+    public async Task Should_add_parkinglot_success_via_service()
     {
         // given
         var context = GetParkingLotContext();
@@ -35,7 +35,7 @@ public class ParkingLotServiceTest : TestBase
     }
 
     [Fact]
-    public async Task Should_get_all_company_by_id_success_via_company_service()
+    public async Task Should_get_all_company_by_id_success_via_service()
     {
         var context = GetParkingLotContext();
         List<ParkingLotDto> companyDtos = new List<ParkingLotDto>()
@@ -64,6 +64,46 @@ public class ParkingLotServiceTest : TestBase
         await parkingLotServiceService.GetAllParkingLot();
 
         Assert.Equal(2, context.ParkingLots.Count());
+    }
+
+    [Fact]
+    public async Task Should_delete_parkinglot_by_id_success_via_service()
+    {
+        var context = GetParkingLotContext();
+        ParkingLotDto parkingLotDto = new ParkingLotDto()
+        {
+            Name = "CUP_NO.1",
+            Capacity = 100,
+            Location = "ZHONGSHI Road",
+        };
+
+        ParkingLotService parkingLotServiceService = new ParkingLotService(context);
+
+        var id = await parkingLotServiceService.AddNewParkingLot(parkingLotDto);
+
+        await parkingLotServiceService.DeleteParkingLot(id);
+
+        Assert.Equal(0, context.ParkingLots.Count());
+    }
+
+    [Fact]
+    public async Task Should_get_parkinglot_by_id_success_via_service()
+    {
+        var context = GetParkingLotContext();
+        ParkingLotDto parkingLotDto = new ParkingLotDto()
+        {
+            Name = "CUP_NO.1",
+            Capacity = 100,
+            Location = "ZHONGSHI Road",
+        };
+
+        ParkingLotService parkingLotServiceService = new ParkingLotService(context);
+
+        var id = await parkingLotServiceService.AddNewParkingLot(parkingLotDto);
+
+        ParkingLotDto company = await parkingLotServiceService.GetParkingLotById(id);
+
+        Assert.Equal("CUP_NO.1", company.Name);
     }
 
     private ParkingLotContext GetParkingLotContext()
