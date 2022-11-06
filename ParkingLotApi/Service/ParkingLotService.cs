@@ -58,6 +58,7 @@ namespace ParkingLotApi.Service
                     var parkingLotDto = parkingEntityFromDB.Select(parkingEntity => new ParkingLotDto(parkingEntity)).ToList();
                     for (int i = skipCount; i < willBeAddedCount; i++)
                     {
+                        parkingLotDto[i].Location = String.Empty;
                         parkingLotDtos.Add(parkingLotDto[i]);
                     }
                 }

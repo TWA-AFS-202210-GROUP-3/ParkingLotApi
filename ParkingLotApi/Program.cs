@@ -25,6 +25,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ParkingLotContext>();
+    //dbContext.Database.EnsureDeleted();
+    //dbContext.Database.EnsureCreated();
 
     if (dbContext.Database.ProviderName.ToLower().Contains("mysql"))
     {

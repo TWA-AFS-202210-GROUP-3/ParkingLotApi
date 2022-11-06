@@ -87,9 +87,9 @@ namespace ParkingLotApiTest.ControllerTest
             };
             ParkingLotDto parkingLotDto2 = new ParkingLotDto()
             {
-                Name = "ParkingLot1",
-                Capacity = 100,
-                Location = "North street No 1",
+                Name = "ParkingLot2",
+                Capacity = 200,
+                Location = "North street No 2",
             };
             List<ParkingLotDto> parkingLotDtos = new List<ParkingLotDto>() { parkingLotDto1, parkingLotDto2 };
             foreach(var parkingLotDto in parkingLotDtos)
@@ -106,6 +106,11 @@ namespace ParkingLotApiTest.ControllerTest
             var getResponseBody = await GetPageResponse.Content.ReadAsStringAsync();
             var parkingLotsInPageId = JsonConvert.DeserializeObject<List<ParkingLotDto>>(getResponseBody);
             Assert.Equal(2, parkingLotsInPageId.Count);
+            Assert.Equal(parkingLotDto1.Name, parkingLotsInPageId[0].Name);
+            Assert.Equal(parkingLotDto1.Capacity, parkingLotsInPageId[0].Capacity);
+            Assert.Equal(string.Empty, parkingLotsInPageId[0].Location);
         }
+
+
     }
 }
