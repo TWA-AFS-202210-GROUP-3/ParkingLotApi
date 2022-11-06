@@ -140,5 +140,36 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(parkingLotDto.Capacity, parkingLot.Capacity);
             Assert.Equal(parkingLotDto.Location, parkingLot.Location);
         }
+
+        [Fact]
+        public async Task Should_update_parkingLot_info_successfully()
+        {
+            // given
+            var factory = new WebApplicationFactory<Program>();
+            var httpClient = factory.CreateClient();
+            await httpClient.DeleteAsync("/ParkingLots");
+
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "ParkingLot1",
+                Capacity = 100,
+                Location = "North street No 1",
+            };
+            var parkingLotJson = JsonConvert.SerializeObject(parkingLotDto);
+            var requestBody = new StringContent(parkingLotJson, Encoding.UTF8, "application/json");
+            var postResponse = await httpClient.PostAsync("/ParkingLots", requestBody);
+
+            // when
+            parkingLotDto.Capacity = 500;
+            var parkingLotJsonForUpdate = JsonConvert.SerializeObject(parkingLotDto);
+            var putRquestBody = new StringContent(parkingLotJsonForUpdate, Encoding.UTF8, "application/json");
+            var getResponse = await httpClient.PutAsync(postResponse.Headers.Location, putRquestBody);
+
+            // then
+            Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
+            var getResponseBody = await getResponse.Content.ReadAsStringAsync();
+            var parkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(getResponseBody);
+            Assert.Equal(parkingLotDto.Capacity, parkingLot.Capacity);
+        }
     }
 }

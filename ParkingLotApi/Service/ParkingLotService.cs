@@ -38,7 +38,7 @@ namespace ParkingLotApi.Service
 
         public async Task<ParkingLotDto> GetById(long id)
         {
-            ParkingLotEntity parkingLotEntity = await dbContext.parkingLots.FirstOrDefaultAsync(company => company.Id == id);
+            ParkingLotEntity parkingLotEntity = await dbContext.parkingLots.FirstOrDefaultAsync(parkingLot => parkingLot.Id == id);
 
             return new ParkingLotDto(parkingLotEntity);
         }
@@ -82,6 +82,16 @@ namespace ParkingLotApi.Service
             }
             await dbContext.SaveChangesAsync();
             return new OkResult();
+        }
+
+        public async Task<ParkingLotDto> UpdateParkingLotInfo(int id, ParkingLotDto parkingLot)
+        {
+            ParkingLotEntity parkingLotEntity = await dbContext.parkingLots.FirstOrDefaultAsync(parkingLot => parkingLot.Id == parkingLot.Id);
+            parkingLotEntity.Name = parkingLot.Name;
+            parkingLotEntity.Capacity = parkingLot.Capacity;
+            parkingLotEntity.Location = parkingLot.Location;
+            await dbContext.SaveChangesAsync();
+            return new ParkingLotDto(parkingLotEntity);
         }
     }
 }

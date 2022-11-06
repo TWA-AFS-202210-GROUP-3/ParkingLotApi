@@ -59,4 +59,13 @@ public class ParkingLotController : ControllerBase
     {
         return parkingLotService.DeleteAllParkingLot();
     }
+
+    [HttpPut]
+    [Route("{parkingLotID}")]
+    public async Task<ActionResult<ParkingLotDto>> UpdateParkingLotInfo([FromRoute]int parkingLotID, [FromBody]ParkingLotDto parkingLot)
+    {
+        var parkingLotDto = await parkingLotService.UpdateParkingLotInfo(parkingLotID,parkingLot);
+        return Ok(parkingLotDto);
+    }
+
 }
