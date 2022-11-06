@@ -44,15 +44,15 @@ namespace ParkingLotApiTest.ControllerTest
         }
 
         [Fact]
-        public async Task Should_sold_parking_lot_successfully()
+        public async Task Should_delete_parking_lot_successfully()
         {
             // given
             var client = GetClient();
             ParkingLotDto parkingLotDto = new ParkingLotDto
             {
-                Name = "hi",
-                Capacity = 1,
-                Location = "hihi",
+                Name = "CUP_NO.1",
+                Capacity = 100,
+                Location = "ZHONGSHI Road",
             };
             var httpContent = JsonConvert.SerializeObject(parkingLotDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
@@ -73,115 +73,114 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(0, parkinglots.Count);
         }
 
-        //[Fact]
-        //public async Task Should_create_many_companies_success()
-        //{
-        //    var client = GetClient();
-        //    CompanyDto companyDto = new CompanyDto
-        //    {
-        //        Name = "IBM",
-        //        Employees = new List<EmployeeDto>()
-        //        {
-        //            new EmployeeDto()
-        //            {
-        //                Name = "Tom",
-        //                Age = 19,
-        //            },
-        //        },
-        //        ProfileDtos = new ProfileDto()
-        //        {
-        //            RegisteredCapital = 100010,
-        //            CertId = "100",
-        //        },
-        //    };
+        [Fact]
+        public async Task Should_get_all_parking_lot_by_page_successfully()
+        {
+            // given
+            var client = GetClient();
+            for (var i = 0; i < 32; i++)
+            {
+                ParkingLotDto parkingLotDto = new ParkingLotDto()
+                {
+                    Name = "CUP_NO.1",
+                    Capacity = 100,
+                    Location = "ZHONGSHI Road",
+                };
+                var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+                StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+                await client.PostAsync("/parkinglot", content);
+            }
 
-        //    CompanyDto companyDto2 = new CompanyDto
-        //    {
-        //        Name = "MS",
-        //        Employees = new List<EmployeeDto>()
-        //        {
-        //            new EmployeeDto()
-        //            {
-        //                Name = "Jerry",
-        //                Age = 18,
-        //            },
-        //        },
-        //        ProfileDtos = new ProfileDto()
-        //        {
-        //            RegisteredCapital = 100020,
-        //            CertId = "101",
-        //        },
-        //    };
+            // when
+            var allParkingLotsResponse = await client.GetAsync("/parkinglot");
 
-        //    var httpContent = JsonConvert.SerializeObject(companyDto);
-        //    StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-        //    await client.PostAsync("/parkinglot", content);
-        //    var httpContent2 = JsonConvert.SerializeObject(companyDto2);
-        //    StringContent content2 = new StringContent(httpContent2, Encoding.UTF8, MediaTypeNames.Application.Json);
-        //    await client.PostAsync("/parkinglot", content2);
+            // then
+            var getbody = await allParkingLotsResponse.Content.ReadAsStringAsync();
 
-        //    var allCompaniesResponse = await client.GetAsync("/parkinglot");
-        //    var body = await allCompaniesResponse.Content.ReadAsStringAsync();
+            var parkinglots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(getbody);
+            Assert.Equal(32, parkinglots.Count());
+        }
 
-        //    var returnCompanies = JsonConvert.DeserializeObject<List<CompanyDto>>(body);
+        [Fact]
+        public async Task Should_get_parking_lot_by_page_successfully()
+        {
+            // given
+            var client = GetClient();
+            for (var i = 0; i < 32; i++)
+            {
+                ParkingLotDto parkingLotDto = new ParkingLotDto()
+                {
+                    Name = "CUP_NO.1",
+                    Capacity = 100,
+                    Location = "ZHONGSHI Road",
+                };
+                var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+                StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+                await client.PostAsync("/parkinglot", content);
+            }
 
-        //    Assert.Equal(2, returnCompanies.Count);
-        //}
+            // when
+            var allParkingLotsResponse = await client.GetAsync("/parkinglots/3");
 
-        //[Fact]
-        //public async Task Should_get_company_by_id_success()
-        //{
-        //    var client = GetClient();
-        //    CompanyDto companyDto = new CompanyDto
-        //    {
-        //        Name = "IBM",
-        //        Employees = new List<EmployeeDto>()
-        //        {
-        //            new EmployeeDto()
-        //            {
-        //                Name = "Tom",
-        //                Age = 19,
-        //            },
-        //        },
-        //        ProfileDtos = new ProfileDto()
-        //        {
-        //            RegisteredCapital = 100010,
-        //            CertId = "100",
-        //        },
-        //    };
+            // then
+            var getbody = await allParkingLotsResponse.Content.ReadAsStringAsync();
 
-        //    CompanyDto companyDto2 = new CompanyDto
-        //    {
-        //        Name = "MS",
-        //        Employees = new List<EmployeeDto>()
-        //        {
-        //            new EmployeeDto()
-        //            {
-        //                Name = "Jerry",
-        //                Age = 18,
-        //            },
-        //        },
-        //        ProfileDtos = new ProfileDto()
-        //        {
-        //            RegisteredCapital = 100020,
-        //            CertId = "101",
-        //        },
-        //    };
+            var parkinglots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(getbody);
+            Assert.Equal(2, parkinglots.Count());
+        }
 
-        //    var httpContent = JsonConvert.SerializeObject(companyDto);
-        //    StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-        //    var companyResponse = await client.PostAsync("/parkinglot", content);
+        [Fact]
+        public async Task Should_get_one_parking_lot_successfully()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "CUP_NO.1",
+                Capacity = 100,
+                Location = "ZHONGSHI Road",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await client.PostAsync("/parkinglot", content);
+            var body = await response.Content.ReadAsStringAsync();
+            var id = JsonConvert.DeserializeObject<int>(body);
 
-        //    var httpContent2 = JsonConvert.SerializeObject(companyDto2);
-        //    StringContent content2 = new StringContent(httpContent2, Encoding.UTF8, MediaTypeNames.Application.Json);
-        //    await client.PostAsync("/parkinglot", content2);
+            //when
+            var allParkingLotsResponse = await client.GetAsync($"/parkinglot/{id}");
 
-        //    var allCompaniesResponse = await client.GetAsync(companyResponse.Headers.Location);
-        //    var body = await allCompaniesResponse.Content.ReadAsStringAsync();
+            // then
+            var getbody = await allParkingLotsResponse.Content.ReadAsStringAsync();
+            var parkinglots = JsonConvert.DeserializeObject<ParkingLotDto>(getbody);
+            Assert.Equal("CUP_NO.1", parkinglots.Name);
+        }
 
-        //    var returnCompany = JsonConvert.DeserializeObject<CompanyDto>(body);
+        [Fact]
+        public async Task Should_update_one_parking_lot_capacity_successfully()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "CUP_NO.1",
+                Capacity = 100,
+                Location = "ZHONGSHI Road",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await client.PostAsync("/parkinglot", content);
+            var body = await response.Content.ReadAsStringAsync();
+            var id = JsonConvert.DeserializeObject<int>(body);
+            var httpContenttt = JsonConvert.SerializeObject(11);
+            StringContent contenttt = new StringContent(httpContenttt, Encoding.UTF8, MediaTypeNames.Application.Json);
 
-        //    Assert.Equal("IBM", returnCompany.Name);
-        //}
+            //when
+            var allParkingLotsResponse = await client.PatchAsync($"/parkinglots/{id}", contenttt);
+
+            // then
+            var getbody = await allParkingLotsResponse.Content.ReadAsStringAsync();
+            var parkinglots = JsonConvert.DeserializeObject<ParkingLotDto>(getbody);
+            Assert.Equal("1", parkinglots.Name);
+        }
     }
 }

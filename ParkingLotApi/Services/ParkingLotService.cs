@@ -62,6 +62,17 @@ namespace ParkingLotApi.Services
             await this.parkingLotContext.SaveChangesAsync();
         }
 
+        public async Task<ParkingLotDto> UpdateParkingLotCapacity(int id, int capacity)
+        {
+            var parkingLot = parkingLotContext.ParkingLots
+                .FirstOrDefault(_ => _.Id == id);
+            if (parkingLot == null) { return null; }
+            parkingLot.Capacity = capacity;
+            parkingLotContext.ParkingLots.Update(parkingLot);
+            await parkingLotContext.SaveChangesAsync();
+            return new ParkingLotDto(parkingLot);
+        }
+
         private bool IsParkingLotNameExisted(ParkingLotEntity parkingLot)
         {
             var parkingLotInSystem = this.parkingLotContext.ParkingLots.FirstOrDefault(p => p.Name.Equals(parkingLot.Name));

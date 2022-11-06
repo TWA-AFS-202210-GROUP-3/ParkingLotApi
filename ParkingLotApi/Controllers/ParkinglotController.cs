@@ -36,11 +36,18 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpGet("{pageNumber}")]
-        public async Task<List<ParkingLotDto>> GetAllByPage([FromRoute] int? pageNumber)
+        public async Task<List<ParkingLotDto>> GetAllByPage([FromRoute] int pageNumber)
         {
-            var companyDto = await this.parkingLotService.GetParkingLotByPage((int)pageNumber);
+            var companyDto = await this.parkingLotService.GetParkingLotByPage(pageNumber);
             return companyDto;
         }
+
+        //[HttpGet]
+        //public async Task<List<ParkingLotDto>> GetAllByPage([FromQuery] int pageNumber)
+        //{
+        //    var companyDto = await this.parkingLotService.GetParkingLotByPage(pageNumber);
+        //    return companyDto;
+        //}
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ParkingLotDto>> GetById([FromRoute] int id)
@@ -55,6 +62,18 @@ namespace ParkingLotApi.Controllers
             await parkingLotService.DeleteParkingLot(id);
 
             return this.NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<ParkingLotDto>> GetById([FromRoute] int id, [FromBody] int capacity)
+        {
+            var parkingLotDTO = await parkingLotService.UpdateParkingLotCapacity(id, capacity);
+            if (parkingLotDTO == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parkingLotDTO);
         }
     }
 }

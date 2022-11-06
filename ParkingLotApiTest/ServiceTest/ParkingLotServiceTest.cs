@@ -56,9 +56,9 @@ public class ParkingLotServiceTest : TestBase
 
         ParkingLotService parkingLotServiceService = new ParkingLotService(context);
 
-        foreach (ParkingLotDto companyDto in companyDtos)
+        foreach (ParkingLotDto parkingLotDto in companyDtos)
         {
-            await parkingLotServiceService.AddNewParkingLot(companyDto);
+            await parkingLotServiceService.AddNewParkingLot(parkingLotDto);
         }
 
         await parkingLotServiceService.GetAllParkingLot();
