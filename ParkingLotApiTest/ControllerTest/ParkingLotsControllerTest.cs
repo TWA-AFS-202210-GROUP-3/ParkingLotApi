@@ -71,13 +71,33 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Empty(allParkingLots);
         }
 
+        [Fact]
+        public async Task Should_update_parking_lot_capacity_success()
+        {
+            var client = this.GetClient();
+            var parkingLotDto = this.CreateParkingLotDto("ParkingLot-1", 0);
+
+            StringContent content = this.SerializeParkingDto(parkingLotDto);
+            var returnedIdMessage = await client.PostAsync("/ParkingLot", content);
+
+            parkingLotDto.Capacity = 5567;
+
+            StringContent capcityContent = this.SerializeParkingDto(parkingLotDto);
+
+            var updatedParkingLotMessage = await client.PutAsync(returnedIdMessage.Headers.Location, capcityContent);
+            var parkingLotString = await updatedParkingLotMessage.Content.ReadAsStringAsync();
+            var updatedParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(parkingLotString);
+
+            Assert.Equal(5567, updatedParkingLot.Capacity);
+        }
+
         private ParkingLotDto CreateParkingLotDto(string name, int capacity)
         {
             return new ParkingLotDto()
             {
                 Name = name,
                 Location = "Beijing",
-                Capacity = capacity == 0 ? capacity : 10,
+                Capacity = capacity,
             };
         }
 

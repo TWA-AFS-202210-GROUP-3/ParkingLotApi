@@ -50,7 +50,7 @@ namespace ParkingLotApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ParkingLotDto>> UpdateParkingLotById(int id, ParkingLotDto parkingLotDto)
         {
-            var parkingLot = await parkingLotService.UpdateParkingLotById(parkingLotDto);
+            var parkingLot = await parkingLotService.UpdateParkingLotById(id, parkingLotDto);
             return Ok(parkingLot);
         }
     }

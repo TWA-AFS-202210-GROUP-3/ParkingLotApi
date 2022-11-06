@@ -57,15 +57,22 @@ namespace ParkingLotApi.Services
             await parkingLotContext.SaveChangesAsync();
         }
 
-        public async Task<ParkingLotDto> UpdateParkingLotById(ParkingLotDto parkingLotDto)
+        public async Task<ParkingLotDto> UpdateParkingLotById(int id, ParkingLotDto parkingLotDto)
         {
             // 1. find matched item prepare update
-            var matchedParkingLotEntity = parkingLotContext.ParkingLots.FirstOrDefault(item => item.Name == parkingLotDto.Name);
+            var matchedParkingLotEntity = parkingLotContext.ParkingLots.FirstOrDefault(item => item.ID == id);
+
+            Console.WriteLine(matchedParkingLotEntity.Capacity);
 
             matchedParkingLotEntity.Capacity = parkingLotDto.Capacity;
+            matchedParkingLotEntity.Name = parkingLotDto.Name;
+            matchedParkingLotEntity.Location = parkingLotDto.Location;
+
             parkingLotContext.ParkingLots.Update(matchedParkingLotEntity);
 
-            return parkingLotDto;
+            await parkingLotContext.SaveChangesAsync();
+
+            return new ParkingLotDto(matchedParkingLotEntity);
         }
     }
 }
