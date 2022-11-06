@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ParkingLotApi.Dtos;
+using ParkingLotApi.Models;
 using ParkingLotApi.Repository;
 
 namespace ParkingLotApi.Services
@@ -22,6 +23,25 @@ namespace ParkingLotApi.Services
 
             // 2. convert entity to dto
             return parkingLots.Select(x => new ParkingLotDto(x)).ToList();
+        }
+
+        public async Task<int> CreateParkingLot(ParkingLotDto parkingLotDto)
+        {
+            // 1. convert dto to entity
+            ParkingLotEntity parkingLotEntity = parkingLotDto.ToEntity();
+            // 2. save entity to db
+            await parkingLotContext.ParkingLots.AddAsync(parkingLotEntity);
+            await parkingLotContext.SaveChangesAsync();
+            // 3. return parkinglotId
+            return parkingLotEntity.ID;
+        }
+
+        public async Task<ParkingLotDto> GetParkingLotById(int id)
+        {
+            // 1. get matched parking lot in db
+            var matchedParkingLot = parkingLotContext.ParkingLots.FirstOrDefault(x => x.ID == id);
+            // 2. convert entity to dto
+            return new ParkingLotDto(matchedParkingLot);
         }
     }
 }
