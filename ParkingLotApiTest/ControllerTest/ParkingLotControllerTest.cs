@@ -186,6 +186,47 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal("1", order.OrderNumber);
         }
 
+        [Fact]
+        public async Task Should_post_a_order_fail_given_a_parking_lot_is_fullAsync()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "parking lot 1",
+                Capacity = 10,
+                Location = "NYC",
+            };
+            var content = GenerateContent(parkingLotDto);
+            var response = await client.PostAsync("/parkingLot", content);
+
+            OrderDto orderDto = new OrderDto
+            {
+                OrderNumber = "",
+                ParkingLotName = "parking lot 1",
+                PlateNumber = "123456",
+                CreationTime = "2022/11/4 14:23",
+                CloseTime = "",
+                OrderStatus = "open",
+            };
+
+            for (int i = 0; i < 10; i++)
+            {
+                orderDto.OrderNumber = i.ToString();
+                var orderContent = GenerateContent(orderDto);
+                var r = await client.PostAsync(response.Headers.Location + "/orders", orderContent);
+                ;
+            }
+
+            // when
+            orderDto.OrderNumber = "10";
+            var orderContentNew = GenerateContent(orderDto);
+            var responseNew = await client.PostAsync(response.Headers.Location + "/orders", orderContentNew);
+
+            // then
+            Assert.Equal(HttpStatusCode.InternalServerError, responseNew.StatusCode);
+        }
+
         private async Task PostParkingLot(HttpClient client, ParkingLotDto parkingLotDto)
         {
             var content = GenerateContent(parkingLotDto);

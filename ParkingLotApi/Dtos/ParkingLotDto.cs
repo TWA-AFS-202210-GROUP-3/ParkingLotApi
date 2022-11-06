@@ -39,5 +39,10 @@ namespace ParkingLotApi.Dtos
                 Orders = this.Orders != null ? this.Orders.Select(order => order.ToEntity()).ToList() : null,
             };
         }
+
+        public bool IsFull()
+        {
+            return this.Orders.Select(o => o.OrderStatus == "open").Count() >= Capacity;
+        }
     }
 }

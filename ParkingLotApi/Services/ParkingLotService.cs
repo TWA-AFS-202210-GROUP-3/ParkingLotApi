@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using ParkingLotApi.Dtos;
 using ParkingLotApi.Models;
 using ParkingLotApi.Repository;
@@ -30,33 +32,34 @@ namespace ParkingLotApi.Services
 
         public async Task<ParkingLotDto> GetById(int id)
         {
-            return new ParkingLotDto(parkingLotcontext.ParkingLots.Find(id));
+            return new ParkingLotDto(GetParkingLotEntitiesIncludeOrders().ToList().Find(_ => _.Id == id));
         }
 
         public async Task<List<ParkingLotDto>> GetAll()
         {
 
-            return parkingLotcontext.ParkingLots.Select(entity => new ParkingLotDto(entity)).ToList();
+            return GetParkingLotEntitiesIncludeOrders()
+                .Select(entity => new ParkingLotDto(entity)).ToList();
         }
 
         public async Task<List<ParkingLotDto>> Get15InPage(int pageIndex)
         {
             var start = (pageIndex - 1) * 15;
             var end = (pageIndex * 15) - 1;
-            var allParkingLots = parkingLotcontext.ParkingLots.Select(entity => new ParkingLotDto(entity)).ToList();
+            var allParkingLots = GetParkingLotEntitiesIncludeOrders().Select(entity => new ParkingLotDto(entity)).ToList();
             return allParkingLots.Where((parkingLot, index) => index >= start && index <= end).ToList();
         }
 
         public async Task DeteleByIdAsync(int id)
         {
-            var parkingLotEntityFound = this.parkingLotcontext.ParkingLots.FirstOrDefault(_ => _.Id == id);
+            var parkingLotEntityFound = GetParkingLotEntitiesIncludeOrders().FirstOrDefault(_ => _.Id == id);
             parkingLotcontext.ParkingLots.RemoveRange(parkingLotEntityFound);
             await this.parkingLotcontext.SaveChangesAsync();
         }
 
         public async Task<ActionResult<ParkingLotDto>> UpdateCapacityById(int id, ParkingLotDto parkingLotDto)
         {
-            var parkingLotEntityFound = this.parkingLotcontext.ParkingLots.FirstOrDefault(_ => _.Id == id);
+            var parkingLotEntityFound = GetParkingLotEntitiesIncludeOrders().FirstOrDefault(_ => _.Id == id);
             parkingLotEntityFound.Capacity = parkingLotDto.Capacity;
             return new ParkingLotDto(parkingLotEntityFound);
         }
@@ -68,11 +71,21 @@ namespace ParkingLotApi.Services
 
         public async Task<int> AddOrderToParkingLot(int parkingLotId, OrderDto orderDto)
         {
-            var parkingLotFound = parkingLotcontext.ParkingLots.Find(parkingLotId);
+            var parkingLotFound = GetParkingLotEntitiesIncludeOrders().ToList().Find(_ => _.Id == parkingLotId);
+            if (parkingLotFound.IsFull())
+            {
+                throw new Exception("The parking lot is full.");
+            }
+
             parkingLotFound.Orders.Add(orderDto.ToEntity());
             await this.parkingLotcontext.SaveChangesAsync();
 
             return parkingLotFound.Orders.Find(_ => _.OrderNumber == orderDto.OrderNumber).Id;
+        }
+
+        private IIncludableQueryable<ParkingLotEntity, List<OrderEntity>> GetParkingLotEntitiesIncludeOrders()
+        {
+            return parkingLotcontext.ParkingLots.Include(parkingLot => parkingLot.Orders);
         }
     }
 }
