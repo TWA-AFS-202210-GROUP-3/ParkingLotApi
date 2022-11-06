@@ -80,5 +80,11 @@ namespace ParkingLotApi.Controllers
         {
             return Ok(await parkingLotService.GetOrderById(orderId));
         }
+
+        [HttpPut("{id}/orders/{orderId}")]
+        public async Task<ActionResult<OrderDto>> PutOrderById([FromRoute] int id, [FromRoute] int orderId, OrderDto orderDto)
+        {
+            return await parkingLotService.UpdateOrderCloseTimeById(id, orderId, orderDto);
+        }
     }
 }

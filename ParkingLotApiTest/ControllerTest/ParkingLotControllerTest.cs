@@ -142,14 +142,16 @@ namespace ParkingLotApiTest.ControllerTest
             };
             var content = GenerateContent(parkingLotDto);
             var response = await client.PostAsync("/parkingLot", content);
+            parkingLotDto.Capacity = 15;
 
             // when
-            var getResponse = await client.GetAsync(response.Headers.Location);
+            var contentNew = GenerateContent(parkingLotDto);
+            var responseNew = await client.PutAsync(response.Headers.Location, contentNew);
 
             // then
-            var body = await getResponse.Content.ReadAsStringAsync();
-            var resultParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
-            Assert.Equal("parking lot 1", resultParkingLot.Name);
+            var body = await responseNew.Content.ReadAsStringAsync();
+            var parkingLotNew = JsonConvert.DeserializeObject<ParkingLotDto>(body);
+            Assert.Equal(15, parkingLotNew.Capacity);
         }
 
         [Fact]
@@ -225,6 +227,44 @@ namespace ParkingLotApiTest.ControllerTest
 
             // then
             Assert.Equal(HttpStatusCode.InternalServerError, responseNew.StatusCode);
+        }
+
+        [Fact]
+        public async Task Should_update_close_time_of_an_order_successfully_given_a_parking_lotAsync()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "parking lot 1",
+                Capacity = 10,
+                Location = "NYC",
+            };
+            var content = GenerateContent(parkingLotDto);
+            var response = await client.PostAsync("/parkingLot", content);
+
+            OrderDto orderDto = new OrderDto
+            {
+                OrderNumber = "1",
+                ParkingLotName = "parking lot 1",
+                PlateNumber = "123456",
+                CreationTime = "2022/11/4 14:23",
+                CloseTime = "",
+                OrderStatus = "open",
+            };
+            var orderContent = GenerateContent(orderDto);
+            var responseNew = await client.PostAsync(response.Headers.Location + "/orders", orderContent);
+
+            //when
+            orderDto.CloseTime = "2022/11/4 17:33";
+            orderDto.OrderStatus = "closed";
+            orderContent = GenerateContent(orderDto);
+            var putResponse = await client.PutAsync(responseNew.Headers.Location, orderContent);
+
+            // then
+            var body = await putResponse.Content.ReadAsStringAsync();
+            var order = JsonConvert.DeserializeObject<OrderDto>(body);
+            Assert.Equal(orderDto.CloseTime, order.CloseTime);
         }
 
         private async Task PostParkingLot(HttpClient client, ParkingLotDto parkingLotDto)

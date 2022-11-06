@@ -83,6 +83,15 @@ namespace ParkingLotApi.Services
             return parkingLotFound.Orders.Find(_ => _.OrderNumber == orderDto.OrderNumber).Id;
         }
 
+        public async Task<ActionResult<OrderDto>> UpdateOrderCloseTimeById(int id, int orderId, OrderDto orderDto)
+        {
+            var parkingLotEntityFound = GetParkingLotEntitiesIncludeOrders().FirstOrDefault(_ => _.Id == id);
+            var orderFound = parkingLotEntityFound.Orders.Find(_ => _.Id == orderId);
+            orderFound.CloseTime = orderDto.CloseTime;
+            orderFound.OrderStatus = orderDto.OrderStatus;
+            return new OrderDto(orderFound);
+        }
+
         private IIncludableQueryable<ParkingLotEntity, List<OrderEntity>> GetParkingLotEntitiesIncludeOrders()
         {
             return parkingLotcontext.ParkingLots.Include(parkingLot => parkingLot.Orders);
