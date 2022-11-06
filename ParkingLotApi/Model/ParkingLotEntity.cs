@@ -15,5 +15,6 @@
 
         public string Location { get; set; }
 
+        public List<ParkingOrderEntity>? Order { get; set; }
     }
 }

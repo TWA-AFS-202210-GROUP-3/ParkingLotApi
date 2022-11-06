@@ -15,6 +15,7 @@ namespace ParkingLotApi.Dtos
             Name = parkingLotEntity.Name;
             Capacity = parkingLotEntity.Capacity;
             Location = parkingLotEntity.Location;
+            OrderDtos = parkingLotEntity.Order?.Select(_ => new ParkingOrderDto(_)).ToList();
         }
 
         public string Name { get; set; }
@@ -23,6 +24,9 @@ namespace ParkingLotApi.Dtos
 
         public string Location { get; set; }
 
+        public List<ParkingOrderDto>? OrderDtos { get; set; }
+
+
         public ParkingLotEntity ToEntity()
         {
             return new ParkingLotEntity()
@@ -30,6 +34,7 @@ namespace ParkingLotApi.Dtos
                 Name = this.Name,
                 Capacity = this.Capacity,
                 Location = this.Location,
+                Order = this.OrderDtos?.Select(_ => _.ToEntity()).ToList(),
             };
         }
 

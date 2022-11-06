@@ -11,11 +11,10 @@ namespace ParkingLotApi.ControllerTest
 {
 
     [Collection("Test")]
-    public class ParkingLotApiTest : TestBase
+    public class ParkingLotControllerTest : TestBase
     {
-        private object idList;
 
-        public ParkingLotApiTest(CustomWebApplicationFactory<Program> factory)
+        public ParkingLotControllerTest(CustomWebApplicationFactory<Program> factory)
             : base(factory)
         {
         }

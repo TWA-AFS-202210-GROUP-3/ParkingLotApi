@@ -24,7 +24,7 @@ namespace ParkingLotApi.Services
         public async Task<List<ParkingLotDto>> GetAll()
         {
             // 1. get parkinglots from database
-            var parkingLots = parkingLotDbContext.ParkingLots
+            var parkingLots = parkingLotDbContext.ParkingLots.Include(parkingLot => parkingLot.Order)
                 .ToList();
 
             // 2. convert entity to DTO
