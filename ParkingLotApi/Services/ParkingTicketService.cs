@@ -28,7 +28,7 @@ namespace ParkingLotApi.Services
 
             if (matchedParkingLot.Capacity - matchedParkingLot.ParkingTickets.Count <= 0)
             {
-                throw new Exception("This parking lot is full, please find another parking lot.");
+                throw new Exception("The parking lot is full.");
             }
 
             ParkingTicketEntity parkingTicketEntity = parkingTicketDto.ToEntity();
