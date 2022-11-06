@@ -65,5 +65,26 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.Equal(0, context.ParkingLots.Count());
         }
 
+        [Fact]
+        public async Task Should_get_parkingLot_by_id_successfully()
+        {
+            //given
+            var context = GetDbContext();
+
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "Lot_1",
+                Capacity = 20,
+                Location = "Strict No.1 ",
+            };
+            var parkinglotService = new ParkingLotServices(context);
+            int id = await parkinglotService.AddParkingLot(parkingLotDto);
+
+            //when
+            var parkinglot= await parkinglotService.GetParkingLotById(id);
+            //then
+            Assert.Equal("Lot_1", parkinglot.Name);
+        }
+
     }
 }
