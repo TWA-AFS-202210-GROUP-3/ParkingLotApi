@@ -20,6 +20,11 @@ namespace ParkingLotApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
         {
+            if (parkingLotDto.Capacity < 0)
+            {
+                throw new Exception("Parking Lot's capacity cannot be minus.");
+            }
+
             var id = await parkingLotService.AddParkingLotAsync(parkingLotDto);
             return CreatedAtAction(nameof(GetById), new { id = id }, parkingLotDto);
         }

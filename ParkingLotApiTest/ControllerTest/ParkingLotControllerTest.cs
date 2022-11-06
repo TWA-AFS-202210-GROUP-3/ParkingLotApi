@@ -6,6 +6,7 @@ using ParkingLotApi.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
@@ -39,6 +40,26 @@ namespace ParkingLotApiTest.ControllerTest
             // then
             var allParkingLots = await GetAllParkingLots(client);
             Assert.Single(allParkingLots);
+        }
+
+        [Fact]
+        public async Task Should_fail_when_post_parking_lot_given_negative_capacityAsync()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "parking lot 1",
+                Capacity = -1,
+                Location = "NYC",
+            };
+
+            // when
+            var content = GenerateContent(parkingLotDto);
+            var response = await client.PostAsync("/parkingLot", content);
+
+            // then
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         private async Task<List<ParkingLotDto>> GetAllParkingLots(HttpClient client)
