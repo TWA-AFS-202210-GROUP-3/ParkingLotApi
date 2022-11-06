@@ -1,6 +1,7 @@
 ﻿using ParkingLotApi.Repository;
 using ParkingLotApiTest;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,17 +16,24 @@ namespace ParkingLotApi.Services
             this.parkingLotContext = parkingLotContext;
         }
 
-        public async Task<int> AddNewParkingLot(ParkingLotDTO parkingLotDTO)
+        public async Task<int> AddNewParkingLot(ParkingLotDto parkingLotDto)
         {
-            ParkingLotEntity parkingLotEntity = parkingLotDTO.ToEntity();
-
-            if (IsParkingLotNameExisted(parkingLotEntity)) { return -1; }
-            if (!IsCapacityValid(parkingLotEntity)) { return -1; }
+            ParkingLotEntity parkingLotEntity = parkingLotDto.ToEntity();
 
             this.parkingLotContext.ParkingLots.Add(parkingLotEntity);
             await this.parkingLotContext.SaveChangesAsync();
 
             return parkingLotEntity.Id;
+        }
+
+        public async Task<List<ParkingLotDto>> GetAllParkingLot()
+        {
+            // get company from db
+            var companies = this.parkingLotContext.ParkingLots
+                .ToList();
+
+            // convert entity to dto(select类似于map)
+            return companies.Select(ParkingLotEntity => new ParkingLotDto(ParkingLotEntity)).ToList();
         }
 
         private bool IsParkingLotNameExisted(ParkingLotEntity parkingLot)

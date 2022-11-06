@@ -3,10 +3,17 @@ using System;
 
 namespace ParkingLotApiTest
 {
-    public class ParkingLotDTO
+    public class ParkingLotDto
     {
-        public ParkingLotDTO()
+        public ParkingLotDto()
         {
+        }
+
+        public ParkingLotDto(ParkingLotEntity parkingLotEntity)
+        {
+            Name = parkingLotEntity.Name;
+            Capacity = parkingLotEntity.Capacity;
+            Location = parkingLotEntity.Location;
         }
 
         public string Name { get; set; }
