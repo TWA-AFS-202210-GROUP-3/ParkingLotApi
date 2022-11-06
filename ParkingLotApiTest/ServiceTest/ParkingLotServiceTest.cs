@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using ParkingLotApi.Dto;
 using ParkingLotApi.Repository;
 using ParkingLotApi.Services;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Net.Mime;
+using ParkingLotApiTest.ControllerTest;
 
 namespace ParkingLotApiTest.ServiceTest
 {
@@ -45,7 +49,7 @@ namespace ParkingLotApiTest.ServiceTest
         }
 
         [Fact]
-        public async Task Should_Delete_parkingLot_successfully()
+        public async Task Should_Delete_parkingLot_by_id_successfully()
         {
             //given
             var context = GetDbContext();
@@ -84,6 +88,28 @@ namespace ParkingLotApiTest.ServiceTest
             var parkinglot= await parkinglotService.GetParkingLotById(id);
             //then
             Assert.Equal("Lot_1", parkinglot.Name);
+        }
+
+        [Fact]
+        public async Task Should_get_parkingLot_by_pagenumber_successfully()
+        {
+            //given
+            var context = GetDbContext();
+
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "Lot_1",
+                Capacity = 20,
+                Location = "Strict No.1 ",
+            };
+            var parkinglotService = new ParkingLotServices(context);
+            await parkinglotService.AddParkingLot(parkingLotDto);
+
+
+            //when
+            List<ParkingLotDto> parkingLotDtos = await parkinglotService.GetParkingLotsByPageNumber(1);
+            //then
+            Assert.Equal(1, parkingLotDtos.Count);
         }
 
     }
