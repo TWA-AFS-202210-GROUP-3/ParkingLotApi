@@ -39,6 +39,14 @@ namespace ParkingLotApi.Services
             return parkingLotcontext.ParkingLots.Select(entity => new ParkingLotDto(entity)).ToList();
         }
 
+        public async Task<List<ParkingLotDto>> Get15InPage(int pageIndex)
+        {
+            var start = (pageIndex - 1) * 15;
+            var end = (pageIndex * 15) - 1;
+            var allParkingLots = parkingLotcontext.ParkingLots.Select(entity => new ParkingLotDto(entity)).ToList();
+            return allParkingLots.Where((parkingLot, index) => index >= start && index <= end).ToList();
+        }
+
         public async Task DeteleByIdAsync(int id)
         {
             var parkingLotEntityFound = this.parkingLotcontext.ParkingLots.FirstOrDefault(_ => _.Id == id);

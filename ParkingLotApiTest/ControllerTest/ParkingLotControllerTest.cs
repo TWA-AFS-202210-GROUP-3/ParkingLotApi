@@ -84,6 +84,33 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Empty(allParkingLots);
         }
 
+        [Fact]
+        public async Task Should_get_15_parking_lots_given_page_index_successfullyAsync()
+        {
+            // given
+            var client = GetClient();
+            for (int i = 0; i < 35; i++)
+            {
+                await PostParkingLot(client, new ParkingLotDto { Name = "parking lot " + i.ToString(), Capacity = 10, Location = "NYC", });
+            }
+            var pageIndex = 2;
+
+            // when
+            var response = await client.GetAsync($"/parkingLot?pageIndex={pageIndex}");
+
+            // then
+            var body = await response.Content.ReadAsStringAsync();
+            var resultParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
+            Assert.Equal(15, resultParkingLots.Count);
+            Assert.Equal("parking lot 15", resultParkingLots[0].Name);
+        }
+
+        private async Task PostParkingLot(HttpClient client, ParkingLotDto parkingLotDto)
+        {
+            var content = GenerateContent(parkingLotDto);
+            await client.PostAsync("/parkingLot", content);
+        }
+
         private async Task<List<ParkingLotDto>> GetAllParkingLots(HttpClient client)
         {
             var response = await client.GetAsync("/parkingLot");

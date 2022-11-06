@@ -2,6 +2,7 @@
 using ParkingLotApi.Dtos;
 using ParkingLotApi.Services;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ParkingLotApi.Controllers
@@ -29,12 +30,19 @@ namespace ParkingLotApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = id }, parkingLotDto);
         }
 
-        
-
         [HttpGet]
-        public async Task<ActionResult<ParkingLotDto>> GetAll([FromRoute] int id)
+        public async Task<ActionResult<List<ParkingLotDto>>> GetAll([FromQuery]int? pageIndex)
         {
-            return Ok(await parkingLotService.GetAll());
+            if (pageIndex.HasValue)
+            {
+                return Ok(await parkingLotService.Get15InPage(pageIndex.Value));
+
+            }
+            else
+            {
+                return Ok(await parkingLotService.GetAll());
+
+            }
         }
 
         [HttpGet("{id}")]
