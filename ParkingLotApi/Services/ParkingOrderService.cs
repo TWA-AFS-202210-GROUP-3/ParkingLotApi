@@ -15,6 +15,7 @@ public class OrderService
     {
         this.context = context;
     }
+
     public async Task<OrderDto> CreateOrder(int parkingLotId, OrderDto orderDto)
     {
         var parkingLotEntity = context.ParkingLots.Include(e => e.Orders).FirstOrDefault(i => i.Id.Equals(parkingLotId));
@@ -22,8 +23,9 @@ public class OrderService
         {
             throw new Exception("not enough capacity");
         }
+
         parkingLotEntity.Orders.Add(orderDto.ToEntity(parkingLotEntity.Name));
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return orderDto;
     }
 

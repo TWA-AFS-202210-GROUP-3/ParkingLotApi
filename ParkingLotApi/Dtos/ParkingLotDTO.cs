@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ParkingLotApi.Dtos;
 
 namespace ParkingLotApiTest
 {
@@ -13,11 +14,11 @@ namespace ParkingLotApiTest
 
         public ParkingLotDto(ParkingLotEntity parkingLotEntity)
         {
-            Id = Guid.NewGuid().ToString();
-            Name = parkingLotEntity.Name;
-            Capacity = parkingLotEntity.Capacity;
-            Location = parkingLotEntity.Location;
-            CreateTime = DateTime.Now;
+            this.Id = Guid.NewGuid().ToString();
+            this.Name = parkingLotEntity.Name;
+            this.Capacity = parkingLotEntity.Capacity;
+            this.Location = parkingLotEntity.Location;
+            this.CreateTime = DateTime.Now;
         }
 
         public string Id { get; set; }
@@ -30,7 +31,7 @@ namespace ParkingLotApiTest
 
         public DateTime? CreateTime { get; set; }
 
-        public List<ParkingLotDto>? ParkingOrders { get; set; }
+        public List<OrderDto>? ParkingOrders { get; set; }
 
         public ParkingLotEntity ToEntity()
         {
@@ -39,7 +40,7 @@ namespace ParkingLotApiTest
                 Name = this.Name,
                 Capacity = this.Capacity,
                 Location = this.Location,
-                Orders = ParkingOrders.Select(_ => _.ToEntity()).ToList(),
+                Orders = ParkingOrders.Select(i => i.ToEntity(this.Name)).ToList(),
             };
         }
     }
