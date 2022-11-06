@@ -95,6 +95,21 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.Equal(3, parkingLotDtoCreated.Count);
         }
 
+        [Fact]
+        public async Task Should_get_all_parkingLot_successfully()
+        {
+            //given
+            var context = GetDbContext();
+            AddMultiParkingLot(context);
+            var parkingLotService = new ParkingLotService(context);
+
+            //when
+            List<ParkingLotDto> parkingLotDtoCreated = await parkingLotService.GetAll();
+
+            //then
+            Assert.Equal(3, parkingLotDtoCreated.Count);
+        }
+
         public ParkingLotContext GetDbContext()
         {
             var scope = Factory.Services.CreateScope();
