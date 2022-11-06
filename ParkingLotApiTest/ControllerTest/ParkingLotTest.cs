@@ -149,7 +149,6 @@ namespace ParkingLotApiTest.ControllerTest
         public async void Should_Update_Information_Of_An_parking_lot()
         {
             //given
-            //given
             var client = GetClient();
             ParkingLotDto parkingLotDto = new ParkingLotDto()
             {
@@ -166,12 +165,48 @@ namespace ParkingLotApiTest.ControllerTest
            StringContent content2 = new StringContent(httpContent2, Encoding.UTF8, MediaTypeNames.Application.Json);
            var modifiledParkinglotRes = await client.PutAsync(postResponse.Headers.Location,content2);
            var body = await modifiledParkinglotRes.Content.ReadAsStringAsync();
-            var modifiedParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
+           var modifiedParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
             //then
             Assert.Equal(HttpStatusCode.OK, modifiledParkinglotRes.StatusCode);
             Assert.Equal(parkingLotDto.Capacity, modifiedParkingLot.Capacity);
         }
 
+        [Fact]
+        public async Task Should_return_a_page_of_parking_lots_when_get_a_page_number()
+        {
+            // given
+            var client = GetClient();
+            var parkingLotDtos = new List<ParkingLotDto>()
+            {
+                new ParkingLotDto()
+                {
+                    Name = "Lot_3",
+                    Capacity = 40,
+                    Location = "Strict No.1 ",
+                },
+                new ParkingLotDto()
+                {
+                    Name = "Lot_5",
+                    Capacity = 80,
+                    Location = "Strict No.10 ",
+                },
+            };
+
+            foreach (var parkinglot in parkingLotDtos)
+            {
+                var httpContent = JsonConvert.SerializeObject(parkinglot);
+                StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+                await client.PostAsync("/parkinglots", content);
+            }
+
+            //when
+            var parkingLotsInPageResponse = await client.GetAsync("/parkinglots?pageNumber=1");
+
+            //then
+            var ResponseBody = await parkingLotsInPageResponse.Content.ReadAsStringAsync();
+            var parkingLotsInPageId = JsonConvert.DeserializeObject<List<ParkingLotDto>>(ResponseBody);
+            Assert.Equal(2, parkingLotsInPageId.Count);
+        }
 
     }
 }
