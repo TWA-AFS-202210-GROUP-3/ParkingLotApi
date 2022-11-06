@@ -3,41 +3,37 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ParkingLotApi.Dtos
 {
-    public class ParkingOrderDto
+    public class OrderDto
     {
-        public ParkingOrderDto()
+        public OrderDto()
         {
             IsOpen = true;
         }
-
-        public ParkingOrderDto(ParkingOrderEntity orderEntity)
+        public OrderDto(OrderEntity orderEntity)
         {
-            this.OrderNumber = Guid.NewGuid();
-            this.ParkingLotName = orderEntity.ParkingLotName;
-            this.PlateNumber = orderEntity.PlateNumber;
-            CreateTime = DateTime.Now;
-            this.CloseTime = orderEntity.CloseTime;
-            this.IsOpen = orderEntity.IsOpen;
+            OrderNumber = orderEntity.OrderNumber;
+            ParkingLotName = orderEntity.ParkingLotName;
+            PlateNumber = orderEntity.PlateNumber;
+            CreateTime = orderEntity.CreateTime;
+            CloseTime = orderEntity.CloseTime;
+            IsOpen = orderEntity.IsOpen;
         }
 
         public string OrderNumber { get; set; }
-
         public string ParkingLotName { get; set; }
 
         public string PlateNumber { get; set; }
-
         public string CreateTime { get; set; }
-
         public string CloseTime { get; set; }
-
         public Boolean IsOpen { get; set; }
-
-        public ParkingOrderEntity ToEntity(string parkingLot)
+        public OrderEntity ToEntity(string parkingLot)
         {
-            var entity = new ParkingOrderEntity
+            var entity = new OrderEntity
             {
+                OrderNumber = new Guid().ToString(),
                 ParkingLotName = parkingLot,
                 PlateNumber = this.PlateNumber,
+                CreateTime = DateTime.Now.ToString(),
                 CloseTime = this.CloseTime,
                 IsOpen = this.IsOpen
             };

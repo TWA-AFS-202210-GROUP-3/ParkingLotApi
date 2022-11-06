@@ -15,15 +15,13 @@ public class OrderService
     {
         this.context = context;
     }
-
     public async Task<OrderDto> CreateOrder(int parkingLotId, OrderDto orderDto)
     {
-        var parkingLotEntity = context.ParkingLotEntities.Include(e => e.Orders).FirstOrDefault(i => i.Id.Equals(parkingLotId));
+        var parkingLotEntity = context.ParkingLots.Include(e => e.Orders).FirstOrDefault(i => i.Id.Equals(parkingLotId));
         if (parkingLotEntity.Orders.FindAll(entity => entity.IsOpen.Equals(true)).Count >= parkingLotEntity.Capacity)
         {
             throw new Exception("not enough capacity");
         }
-
         parkingLotEntity.Orders.Add(orderDto.ToEntity(parkingLotEntity.Name));
         context.SaveChanges();
         return orderDto;
@@ -31,7 +29,7 @@ public class OrderService
 
     public async Task<OrderDto> UpdateOrder(int parkingLotId, int OrderId, OrderDto newOrder)
     {
-        var parkingLotEntity = context.ParkingLotEntities.Include(e => e.Orders).FirstOrDefault(i => i.Id.Equals(parkingLotId));
+        var parkingLotEntity = context.ParkingLots.Include(e => e.Orders).FirstOrDefault(i => i.Id.Equals(parkingLotId));
         var entity = parkingLotEntity.Orders.Find(e => e.Id.Equals(OrderId));
         entity.IsOpen = false;
         entity.CloseTime = DateTime.Now.ToString();

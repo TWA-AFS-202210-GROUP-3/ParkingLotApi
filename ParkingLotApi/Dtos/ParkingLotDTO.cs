@@ -1,5 +1,7 @@
 ﻿using ParkingLotApi.Repository;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ParkingLotApiTest
 {
@@ -11,14 +13,14 @@ namespace ParkingLotApiTest
 
         public ParkingLotDto(ParkingLotEntity parkingLotEntity)
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToString();
             Name = parkingLotEntity.Name;
             Capacity = parkingLotEntity.Capacity;
             Location = parkingLotEntity.Location;
             CreateTime = DateTime.Now;
         }
 
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
 
@@ -28,13 +30,16 @@ namespace ParkingLotApiTest
 
         public DateTime? CreateTime { get; set; }
 
+        public List<ParkingLotDto>? ParkingOrders { get; set; }
+
         public ParkingLotEntity ToEntity()
         {
-            return new ParkingLotEntity() 
+            return new ParkingLotEntity()
             {
                 Name = this.Name,
                 Capacity = this.Capacity,
                 Location = this.Location,
+                Orders = ParkingOrders.Select(_ => _.ToEntity()).ToList(),
             };
         }
     }

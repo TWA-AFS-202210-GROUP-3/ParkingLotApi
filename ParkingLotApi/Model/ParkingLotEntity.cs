@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ParkingLotApi.Dtos;
+using System;
+using System.Collections.Generic;
 
 namespace ParkingLotApi.Repository
 {
@@ -17,5 +19,7 @@ namespace ParkingLotApi.Repository
         public string Location { get; set; }
 
         public DateTime? CreateTime { get; set; }
+
+        public List<OrderEntity?>? Orders { get; set; }
     }
 }

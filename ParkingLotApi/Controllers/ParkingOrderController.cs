@@ -15,7 +15,6 @@ namespace ParkingLotApi.Controllers
         {
             this.orderService = orderService;
         }
-
         [HttpPost]
         public async Task<IActionResult> CreateOrder(int parkingLotId, OrderDto orderDto)
         {
@@ -24,6 +23,7 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpPut("{orderId}")]
+
         public async Task<IActionResult> CreateOrder(int parkingLotId, int orderId, OrderDto orderDto)
         {
             OrderDto order = await orderService.UpdateOrder(parkingLotId, orderId, orderDto);
