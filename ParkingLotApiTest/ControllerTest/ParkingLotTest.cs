@@ -110,7 +110,39 @@ namespace ParkingLotApiTest.ControllerTest
 
             //Then
             Assert.Equal(HttpStatusCode.NoContent, deleterepsonse.StatusCode);
+        }
 
+        [Fact]
+        public async Task Should_get_a_special_Parking_Lot_infor_successfully()
+        {
+            //given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "Lot_2",
+                Capacity = 0,
+                Location = "Strict No.1 ",
+            };
+            ParkingLotDto parkingLotDto2 = new ParkingLotDto()
+            {
+                Name = "Lot_3",
+                Capacity = 20,
+                Location = "Strict No.2 ",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var Response = await client.PostAsync("/parkinglots", content);
+
+            var httpContent2 = JsonConvert.SerializeObject(parkingLotDto2);
+            StringContent content2 = new StringContent(httpContent2, Encoding.UTF8, MediaTypeNames.Application.Json);
+            await client.PostAsync("/parkinglots", content2);
+            //Then
+            var allPklotsResponse = await client.GetAsync(Response.Headers.Location);
+            var body = await allPklotsResponse.Content.ReadAsStringAsync();
+
+            var returnParkinglot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
+
+            Assert.Equal("Lot_2", returnParkinglot.Name);
         }
 
 
