@@ -99,10 +99,35 @@ namespace ParkingLotApi.ControllerTest
             var responseBody2 = await responsePage2.Content.ReadAsStringAsync();
             var returnedPage2 = JsonConvert.DeserializeObject<List<ParkingLotDto>>(responseBody2);
 
-            Assert.Equal(HttpStatusCode.OK, responsePage1.StatusCode);
-            Assert.Equal(HttpStatusCode.OK, responsePage2.StatusCode);
             Assert.Equal(ParkingLotService.NumPerPage, returnedPage1?.Count);
             Assert.Equal(parkingLots - ParkingLotService.NumPerPage, returnedPage2?.Count);
+        }
+
+        [Fact]
+        public async void Should_return_a_parking_lot_with_given_id()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "Haidian",
+                Capacity = 10,
+                Location = "Beijing",
+            };
+
+            // when
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            await client.PostAsync("/parkinglots", content);
+
+            // then
+            var allParkingLotsResponse = await client.GetAsync("/parkinglots");
+            var body = await allParkingLotsResponse.Content.ReadAsStringAsync();
+
+            var returnParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
+
+            Assert.Single(returnParkingLots);
+            Assert.Equal(parkingLotDto.ToString(), returnParkingLots[0].ToString());
         }
     }
 }
