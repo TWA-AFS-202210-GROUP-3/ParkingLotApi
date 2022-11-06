@@ -43,5 +43,27 @@ namespace ParkingLotApiTest.ServiceTest
             //then
             Assert.Equal(1, context.ParkingLots.Count());
         }
+
+        [Fact]
+        public async Task Should_Delete_parkingLot_successfully()
+        {
+            //given
+            var context = GetDbContext();
+
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "Lot_1",
+                Capacity = 20,
+                Location = "Strict No.1 ",
+            };
+            var parkinglotService = new ParkingLotServices(context);
+            int id = await parkinglotService.AddParkingLot(parkingLotDto);
+
+            //when
+            await parkinglotService.DeleteParkingLotById(id);
+            //then
+            Assert.Equal(0, context.ParkingLots.Count());
+        }
+
     }
 }
