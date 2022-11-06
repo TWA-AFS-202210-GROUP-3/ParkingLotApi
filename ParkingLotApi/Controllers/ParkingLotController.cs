@@ -29,16 +29,25 @@ namespace ParkingLotApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = id }, parkingLotDto);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ParkingLotDto>> GetById([FromRoute]int id)
-        {
-            return Ok(await parkingLotService.GetById(id));
-        }
+        
 
         [HttpGet]
         public async Task<ActionResult<ParkingLotDto>> GetAll([FromRoute] int id)
         {
             return Ok(await parkingLotService.GetAll());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ParkingLotDto>> GetById([FromRoute] int id)
+        {
+            return Ok(await parkingLotService.GetById(id));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeteleById([FromRoute] int id)
+        {
+            parkingLotService.DeteleByIdAsync(id);
+            return this.NoContent();
         }
     }
 }
