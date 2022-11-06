@@ -1,4 +1,5 @@
-﻿using ParkingLotApi.Models;
+﻿using System;
+using ParkingLotApi.Models;
 
 namespace ParkingLotApi.Dtos
 {
@@ -19,9 +20,9 @@ namespace ParkingLotApi.Dtos
 
         public string PlateNumber { get; set; }
 
-        public string CreateTime { get; set; }
+        public DateTime CreateTime { get; set; }
 
-        public string CloseTime { get; set; }
+        public DateTime CloseTime { get; set; }
 
         public bool OrderStatus { get; set; }
 
