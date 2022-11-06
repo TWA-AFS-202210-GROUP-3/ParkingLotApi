@@ -13,6 +13,7 @@ namespace ParkingLotApiTest.ControllerTest
     using System.Net;
     using System.Collections.Generic;
 
+    [Collection("test")]
     public class ParkingLotControllerTest
     {
         public ParkingLotControllerTest()

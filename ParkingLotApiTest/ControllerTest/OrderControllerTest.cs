@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace ParkingLotApiTest.ControllerTest
 {
+    [Collection("test")]
     public class OrderControllerTest
     {
         [Fact]
