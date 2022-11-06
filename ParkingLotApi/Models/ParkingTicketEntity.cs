@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ParkingLotApi.Models
 {
@@ -14,7 +15,7 @@ namespace ParkingLotApi.Models
 
         public DateTime CreateTime { get; set; }
 
-        public DateTime CloseTime { get; set; }
+        public DateTime? CloseTime { get; set; }
 
         public bool OrderStatus { get; set; }
     }

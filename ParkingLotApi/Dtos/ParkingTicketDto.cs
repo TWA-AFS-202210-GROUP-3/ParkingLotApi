@@ -22,7 +22,7 @@ namespace ParkingLotApi.Dtos
 
         public DateTime CreateTime { get; set; }
 
-        public DateTime CloseTime { get; set; }
+        public DateTime? CloseTime { get; set; }
 
         public bool OrderStatus { get; set; }
 
@@ -33,7 +33,7 @@ namespace ParkingLotApi.Dtos
                 ParkingLotName = this.ParkingLotName,
                 PlateNumber = this.PlateNumber,
                 CreateTime = this.CreateTime,
-                CloseTime = this.CloseTime,
+                CloseTime = this.CloseTime != null ? this.CloseTime : null,
                 OrderStatus = this.OrderStatus,
             };
         }
