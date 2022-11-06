@@ -17,10 +17,12 @@ namespace ParkingLotApi.Services
             this.parkingLotContext = parkingLotContext;
         }
 
-        public async Task<List<ParkingLotDto>> GetAllParkingLots()
+        public async Task<List<ParkingLotDto>> GetAllParkingLots(string? page)
         {
             // 1. get all parking lots from DB
-            var parkingLots = parkingLotContext.ParkingLots.ToList();
+            int pageNum = int.Parse(page);
+            int count = parkingLotContext.ParkingLots.Count() - (pageNum - 1) * 15 > 15 ? 15 : parkingLotContext.ParkingLots.Count();
+            var parkingLots = parkingLotContext.ParkingLots.ToList().GetRange((pageNum - 1) * 15, count);
 
             // 2. convert entity to dto
             return parkingLots.Select(x => new ParkingLotDto(x)).ToList();
@@ -53,6 +55,17 @@ namespace ParkingLotApi.Services
             parkingLotContext.ParkingLots.Remove(matchedParkingLot);
 
             await parkingLotContext.SaveChangesAsync();
+        }
+
+        public async Task<ParkingLotDto> UpdateParkingLotById(ParkingLotDto parkingLotDto)
+        {
+            // 1. find matched item prepare update
+            var matchedParkingLotEntity = parkingLotContext.ParkingLots.FirstOrDefault(item => item.Name == parkingLotDto.Name);
+
+            matchedParkingLotEntity.Capacity = parkingLotDto.Capacity;
+            parkingLotContext.ParkingLots.Update(matchedParkingLotEntity);
+
+            return parkingLotDto;
         }
     }
 }

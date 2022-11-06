@@ -26,9 +26,9 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ParkingLotDto>>> GetParkingLots()
+        public async Task<ActionResult<List<ParkingLotDto>>> GetParkingLots([FromQuery] string page)
         {
-            var parkingLotsDtos = await this.parkingLotService.GetAllParkingLots();
+            var parkingLotsDtos = await this.parkingLotService.GetAllParkingLots(page);
             return Ok(parkingLotsDtos);
         }
 
@@ -45,6 +45,13 @@ namespace ParkingLotApi.Controllers
             await parkingLotService.DeleteParkingLotById(id);
 
             return this.NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ParkingLotDto>> UpdateParkingLotById(int id, ParkingLotDto parkingLotDto)
+        {
+            var parkingLot = await parkingLotService.UpdateParkingLotById(parkingLotDto);
+            return Ok(parkingLot);
         }
     }
 }

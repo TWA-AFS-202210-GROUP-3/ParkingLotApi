@@ -29,7 +29,7 @@ namespace ParkingLotApiTest.ControllerTest
             StringContent content = this.SerializeParkingDto(parkingLotDto);
             await client.PostAsync("/ParkingLot", content);
 
-            var allParkingLotsResponseMessage = await client.GetAsync("/ParkingLot");
+            var allParkingLotsResponseMessage = await client.GetAsync("/ParkingLot?page=1");
             var allParkingLotsString = await allParkingLotsResponseMessage.Content.ReadAsStringAsync();
             var allParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(allParkingLotsString);
 
@@ -64,7 +64,7 @@ namespace ParkingLotApiTest.ControllerTest
 
             await client.DeleteAsync(returnedIdMessage.Headers.Location);
 
-            var allParkingLotsResponseMessage = await client.GetAsync("/ParkingLot");
+            var allParkingLotsResponseMessage = await client.GetAsync("/ParkingLot?page=1");
             var allParkingLotsString = await allParkingLotsResponseMessage.Content.ReadAsStringAsync();
             var allParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(allParkingLotsString);
 
