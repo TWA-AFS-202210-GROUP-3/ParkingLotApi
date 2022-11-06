@@ -33,14 +33,13 @@ public class ParkingLotController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
     {
-        var parkingLotID = parkingLotService.AddOneParkingLot(parkingLotDto);
+        var parkingLotID = await parkingLotService.AddOneParkingLot(parkingLotDto);
         return CreatedAtAction(nameof(GetById), new { parkingLotId = parkingLotID }, parkingLotDto);
     }
 
-
     [HttpDelete]
     [Route("{parkingLotID}")]
-    public Task<ActionResult> DeleteParkingLot([FromRoute] string parkingLotID)
+    public Task<ActionResult> DeleteParkingLot([FromRoute] int parkingLotID)
     {
         return parkingLotService.DeleteOneParkingLot(parkingLotID);
     }

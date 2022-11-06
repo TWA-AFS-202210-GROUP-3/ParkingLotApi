@@ -24,9 +24,9 @@ namespace ParkingLotApi.Service
             return parkingLotEntity.Id;
         }
 
-        public async Task<ActionResult> DeleteOneParkingLot(string parkingLotID)
+        public async Task<ActionResult> DeleteOneParkingLot(int parkingLotID)
         {
-            ParkingLotEntity parkingLotEntity = await dbContext.parkingLots.FirstOrDefaultAsync(item => item.Id.Equals(parkingLotID));
+            ParkingLotEntity parkingLotEntity = await dbContext.parkingLots.FirstOrDefaultAsync(item => item.Id == parkingLotID);
             dbContext.parkingLots.Remove(parkingLotEntity);
             await dbContext.SaveChangesAsync();
             return new OkResult();
