@@ -91,6 +91,38 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.Equal(0, context.orders.Count());
         }
 
+        [Fact]
+        public async Task Should_update_order_successfully()
+        {
+            //given
+            var context = GetDbContext();
+
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "ParkingLot1",
+                Capacity = 100,
+                Location = "North street No 1",
+            };
+            var parkingLotService = new ParkingLotService(context);
+            await parkingLotService.AddOneParkingLot(parkingLotDto);
+
+            OrderDto orderDto = new OrderDto()
+            {
+                OrderNumber = "Order1",
+                ParkingLotName = "ParkingLot1",
+                PlateNumber = "A1B2C3",
+                Status = true,
+            };
+            var orderService = new OrderService(context);
+            int id = await orderService.AddOneOrder(orderDto);
+            //when
+            var closedTime = DateTime.Now;
+            orderDto.Closedime = closedTime;
+            OrderDto orderDtoUpdated = await orderService.UpdateOrderInfo(id, orderDto);
+            //then
+            Assert.Equal(closedTime, orderDtoUpdated.Closedime);
+        }
+
         public ParkingLotContext GetDbContext()
         {
             var scope = Factory.Services.CreateScope();
