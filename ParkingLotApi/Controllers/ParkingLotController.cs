@@ -19,19 +19,34 @@ namespace ParkingLotApi.Controllers
             this.parkingLotService = parkingLotService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ParkingLotDto>>> List()
-        {
-            var companyDtos = await this.parkingLotService.GetAll();
-
-            return Ok(companyDtos);
-        }
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<ParkingLotDto>>> List()
+        // {
+        //     var parkingLotDtos = await this.parkingLotService.GetAll();
+        //
+        //     return Ok(parkingLotDtos);
+        // }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ParkingLotDto>> GetById(int id)
         {
-            var companyDto = await this.parkingLotService.GetById(id);
-            return Ok(companyDto);
+            var parkingLotDto = await this.parkingLotService.GetById(id);
+            return Ok(parkingLotDto);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ParkingLotDto>>> GetByPage([FromQuery] int? page)
+        {
+            if (page == null)
+            {
+                var parkingLotDtos = await this.parkingLotService.GetAll();
+                return Ok(parkingLotDtos);
+            }
+            else
+            {
+                var parkingLotDtos = await this.parkingLotService.GetByPageIndex(page.Value);
+                return Ok(parkingLotDtos);
+            }
         }
 
         [HttpPost]
@@ -49,5 +64,7 @@ namespace ParkingLotApi.Controllers
 
             return this.NoContent();
         }
+
+
     }
 }

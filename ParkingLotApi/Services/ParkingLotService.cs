@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ParkingLotApi.Dtos;
@@ -18,9 +19,11 @@ namespace ParkingLotApi.Services
             this.parkingLotDbContext = parkingLotDbContext;
         }
 
+        public static int NumPerPage = 15;
+
         public async Task<List<ParkingLotDto>> GetAll()
         {
-            // 1. get company from database
+            // 1. get parkinglots from database
             var parkingLots = parkingLotDbContext.ParkingLots
                 .ToList();
 
@@ -28,12 +31,24 @@ namespace ParkingLotApi.Services
             return parkingLots.Select(parkingLotEntity => new ParkingLotDto(parkingLotEntity)).ToList();
         }
 
-        public async Task<ParkingLotDto> GetById(long id)
+        public async Task<ParkingLotDto> GetById(int id)
         {
-            var parkingLotMatched = parkingLotDbContext.ParkingLots
+            var mathcedParkingLot = parkingLotDbContext.ParkingLots
                 .FirstOrDefault(parkingLot => parkingLot.ID == id);
 
-            return new ParkingLotDto(parkingLotMatched);
+            return new ParkingLotDto(mathcedParkingLot);
+        }
+
+        public async Task<List<ParkingLotDto>> GetByPageIndex(int pageIndex)
+        {
+            var parkingLots = parkingLotDbContext.ParkingLots
+                .ToList();
+            var parkingLotsInPage = parkingLots.Select(parkingLotEntity => new ParkingLotDto(parkingLotEntity))
+                .Skip((pageIndex - 1) * NumPerPage)
+                .Take(NumPerPage)
+                .ToList();
+
+            return parkingLotsInPage;
         }
 
         public async Task<int> AddParkingLot(ParkingLotDto companyDto)
@@ -58,13 +73,7 @@ namespace ParkingLotApi.Services
 
         }
 
-        public async Task<ParkingLotDto> GetById(int id)
-        {
-            var mathcedParkingLot = parkingLotDbContext.ParkingLots
-                .FirstOrDefault(parkingLot => parkingLot.ID == id);
 
-            return new ParkingLotDto(mathcedParkingLot);
-        }
 
     }
 }
