@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using ParkingLotApi.Dto;
 using System.Net.Mime;
 using System.Net;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ParkingLotApiTest.ControllerTest
 {
@@ -43,6 +44,29 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal("Lot_1",NewParkingLot.Name);
             Assert.Equal(20, NewParkingLot.Capacity);
             Assert.Equal("Strict No.1 ", NewParkingLot.Location);
+        }
+
+        [Fact]
+        public async void Should_return_conflict_when_create_same_pk_name()
+        {
+            //given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "Lot_1",
+                Capacity = 20,
+                Location = "Strict No.1 ",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            //when
+
+            await client.PostAsync("/parkinglots", content);
+            var response = await client.PostAsync("/parkinglots", content);
+
+            //then
+            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+
         }
 
         [Fact]
