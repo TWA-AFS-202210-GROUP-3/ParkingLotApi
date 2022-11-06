@@ -28,6 +28,13 @@ namespace ParkingLotApi.Controllers
             return this.parkingLotService.GetAllParkingLot();
         }
 
+        [HttpPost]
+        public async Task<ActionResult<int>> AddNew(ParkingLotDto parkingLotDto)
+        {
+            var id = await this.parkingLotService.AddNewParkingLot(parkingLotDto);
+            return id;
+        }
+
         [HttpGet("{pageNumber}")]
         public async Task<List<ParkingLotDto>> GetAllByPage([FromRoute] int? pageNumber)
         {
@@ -40,14 +47,6 @@ namespace ParkingLotApi.Controllers
         {
             var companyDto = await this.parkingLotService.GetParkingLotById(id);
             return Ok(companyDto);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<int>> Add(ParkingLotDto parkingLotDto)
-        {
-            var id = await this.parkingLotService.AddNewParkingLot(parkingLotDto);
-
-            return id;
         }
 
         [HttpDelete("{id}")]

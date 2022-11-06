@@ -18,125 +18,40 @@ namespace ParkingLotApiTest.ControllerTest
         }
 
         [Fact]
-        public async Task Should_add_a_parkinglot_success()
+        public async Task Should_add_parking_lot_successfully()
         {
             // given
             var client = GetClient();
-            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            ParkingLotDto parkingLotDto = new ParkingLotDto
             {
                 Name = "CUP_NO.1",
                 Capacity = 100,
                 Location = "ZHONGSHI Road",
             };
-
-            // when
             var httpContent = JsonConvert.SerializeObject(parkingLotDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+            // when
             await client.PostAsync("/parkinglot", content);
 
             // then
-            var allCompaniesResponse = await client.GetAsync("/parkinglot");
-            var body = await allCompaniesResponse.Content.ReadAsStringAsync();
+            var allParkingLotsResponse = await client.GetAsync("/parkinglot");
+            var body = await allParkingLotsResponse.Content.ReadAsStringAsync();
 
-            var returnCompanies = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
-
-            Assert.Single(returnCompanies);
+            var parkinglots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
+            Assert.Single(parkinglots);
         }
 
         //[Fact]
-        //public async Task Should_create_company_with_profile_success()
+        //public async Task Should_delete_parkinglot_success()
         //{
-        //    // given
-        //    var client = GetClient();
-        //    CompanyDto companyDto = new CompanyDto
-        //    {
-        //        Name = "IBM",
-        //        ProfileDtos = new ProfileDto()
-        //        {
-        //            RegisteredCapital = 100010,
-        //            CertId = "100",
-        //        },
-        //    };
-
-        //    // when
-        //    var httpContent = JsonConvert.SerializeObject(companyDto);
-        //    StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-        //    await client.PostAsync("/companies", content);
-
-        //    // then
-        //    var allCompaniesResponse = await client.GetAsync("/parkinglot");
-        //    var body = await allCompaniesResponse.Content.ReadAsStringAsync();
-
-        //    var returnCompanies = JsonConvert.DeserializeObject<List<CompanyDto>>(body);
-
-        //    Assert.Single(returnCompanies);
-        //    Assert.Equal(companyDto.ProfileDtos.CertId, returnCompanies[0].ProfileDtos.CertId);
-        //    Assert.Equal(companyDto.ProfileDtos.RegisteredCapital, returnCompanies[0].ProfileDtos.RegisteredCapital);
-        //}
-
-        //[Fact]
-        //public async Task Should_create_company_with_profile_and_employees_success()
+        //var client = GetClient();
+        //ParkingLotDto parkingLotDto = new ParkingLotDto
         //{
-        //    // given
-        //    var client = GetClient();
-        //    CompanyDto companyDto = new CompanyDto
-        //    {
-        //        Name = "IBM",
-        //        Employees = new List<EmployeeDto>()
-        //        {
-        //            new EmployeeDto()
-        //            {
-        //                Name = "Tom",
-        //                Age = 19,
-        //            },
-        //        },
-        //        ProfileDtos = new ProfileDto()
-        //        {
-        //            RegisteredCapital = 100010,
-        //            CertId = "100",
-        //        },
-        //    };
-
-        //    // when
-        //    var httpContent = JsonConvert.SerializeObject(companyDto);
-        //    StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-        //    await client.PostAsync("/parkinglot", content);
-
-        //    // then
-        //    var allCompaniesResponse = await client.GetAsync("/parkinglot");
-        //    var body = await allCompaniesResponse.Content.ReadAsStringAsync();
-
-        //    var returnCompanies = JsonConvert.DeserializeObject<List<CompanyDto>>(body);
-
-        //    Assert.Single(returnCompanies);
-        //    Assert.Equal(companyDto.ProfileDtos.CertId, returnCompanies[0].ProfileDtos.CertId);
-        //    Assert.Equal(companyDto.ProfileDtos.RegisteredCapital, returnCompanies[0].ProfileDtos.RegisteredCapital);
-        //    Assert.Equal(companyDto.Employees.Count, returnCompanies[0].Employees.Count);
-        //    Assert.Equal(companyDto.Employees[0].Age, returnCompanies[0].Employees[0].Age);
-        //    Assert.Equal(companyDto.Employees[0].Name, returnCompanies[0].Employees[0].Name);
-        //}
-
-        //[Fact]
-        //public async Task Should_delete_company_and_related_employee_and_profile_success()
-        //{
-        //    var client = GetClient();
-        //    CompanyDto companyDto = new CompanyDto
-        //    {
-        //        Name = "IBM",
-        //        Employees = new List<EmployeeDto>()
-        //        {
-        //            new EmployeeDto()
-        //            {
-        //                Name = "Tom",
-        //                Age = 19,
-        //            },
-        //        },
-        //        ProfileDtos = new ProfileDto()
-        //        {
-        //            RegisteredCapital = 100010,
-        //            CertId = "100",
-        //        },
-        //    };
+        //    Name = "CUP_NO.1",
+        //    Capacity = 100,
+        //    Location = "ZHONGSHI Road",
+        //};
 
         //    var httpContent = JsonConvert.SerializeObject(companyDto);
         //    StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
