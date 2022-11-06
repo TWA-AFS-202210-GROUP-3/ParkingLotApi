@@ -41,5 +41,29 @@ namespace ParkingLotApi.ControllerTest
 
             Assert.Single(returnParkingLots);
         }
+
+        [Fact]
+        public async Task Should_delete_parking_lot_successfully()
+        {
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "Haidian",
+                Capacity = 10,
+                Location = "Beijing",
+            };
+
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+            var response = await client.PostAsync("/parkinglots", content);
+            await client.DeleteAsync(response.Headers.Location);
+            var allResponse = await client.GetAsync("/parkinglots");
+            var body = await allResponse.Content.ReadAsStringAsync();
+
+            var returnParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
+
+            Assert.Empty(returnParkingLots);
+        }
     }
 }

@@ -41,5 +41,13 @@ namespace ParkingLotApi.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = id }, companyDto);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            await parkingLotService.DeleteParkinglot(id);
+
+            return this.NoContent();
+        }
     }
 }
