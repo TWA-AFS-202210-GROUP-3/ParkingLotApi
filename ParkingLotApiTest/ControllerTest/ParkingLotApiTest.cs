@@ -13,6 +13,8 @@ namespace ParkingLotApi.ControllerTest
     [Collection("Test")]
     public class ParkingLotApiTest : TestBase
     {
+        private object idList;
+
         public ParkingLotApiTest(CustomWebApplicationFactory<Program> factory)
             : base(factory)
         {
@@ -118,16 +120,45 @@ namespace ParkingLotApi.ControllerTest
             // when
             var httpContent = JsonConvert.SerializeObject(parkingLotDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-            await client.PostAsync("/parkinglots", content);
+            var response = await client.PostAsync("/parkinglots", content);
 
             // then
-            var allParkingLotsResponse = await client.GetAsync("/parkinglots");
+            var allParkingLotsResponse = await client.GetAsync(response.Headers.Location);
             var body = await allParkingLotsResponse.Content.ReadAsStringAsync();
 
-            var returnParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
+            var returnParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
 
-            Assert.Single(returnParkingLots);
-            Assert.Equal(parkingLotDto.ToString(), returnParkingLots[0].ToString());
+            Assert.Equal(parkingLotDto.ToString(), returnParkingLot.ToString());
+        }
+
+        [Fact]
+        public async void Should_be_abel_to_change_parking_lot_capacity_with_given_id()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "Haidian",
+                Capacity = 10,
+                Location = "Beijing",
+            };
+
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json); 
+            var response = await client.PostAsync("/parkinglots", content);
+
+            // when
+            parkingLotDto.Capacity = 100;
+            var httpContentNew = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent contentNew = new StringContent(httpContentNew, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var responseNew = await client.PutAsync(response.Headers.Location, contentNew);
+
+            // then
+            var body = await responseNew.Content.ReadAsStringAsync();
+
+            var returnParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
+
+            Assert.Equal(100, returnParkingLot.Capacity);
         }
     }
 }

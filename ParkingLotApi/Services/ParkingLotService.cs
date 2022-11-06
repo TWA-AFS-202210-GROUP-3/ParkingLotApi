@@ -70,9 +70,17 @@ namespace ParkingLotApi.Services
 
             parkingLotDbContext.ParkingLots.Remove(foundParking);
             await parkingLotDbContext.SaveChangesAsync();
-
         }
 
+        public async Task<ParkingLotDto> ExpandCapacity(int id, ParkingLotDto newParkingLotDto)
+        {
+            var parkingLot = await GetById(id);
+            parkingLot.Capacity = newParkingLotDto.Capacity;
+            parkingLotDbContext.ParkingLots.Update(parkingLot.ToEntity());
+            await parkingLotDbContext.SaveChangesAsync();
+
+            return parkingLot;
+        }
 
 
     }

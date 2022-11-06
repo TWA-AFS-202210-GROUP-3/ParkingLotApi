@@ -50,11 +50,11 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ParkingLotDto>> Add(ParkingLotDto companyDto)
+        public async Task<ActionResult<ParkingLotDto>> Add(ParkingLotDto parkingLotDto)
         {
-            var id = await this.parkingLotService.AddParkingLot(companyDto);
+            var id = await this.parkingLotService.AddParkingLot(parkingLotDto);
 
-            return CreatedAtAction(nameof(GetById), new { id = id }, companyDto);
+            return CreatedAtAction(nameof(GetById), new { id = id }, parkingLotDto);
         }
 
         [HttpDelete("{id}")]
@@ -65,6 +65,12 @@ namespace ParkingLotApi.Controllers
             return this.NoContent();
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ParkingLotDto>> UpdateParkingLot([FromRoute] int id, ParkingLotDto parkingLotDto)
+        {
+            var updatedParkingLotDto = await this.parkingLotService.ExpandCapacity(id, parkingLotDto);
 
+            return Ok(updatedParkingLotDto);
+        }
     }
 }
