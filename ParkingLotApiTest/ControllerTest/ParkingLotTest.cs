@@ -70,6 +70,27 @@ namespace ParkingLotApiTest.ControllerTest
         }
 
         [Fact]
+        public async void Should_return_badrequest_when_create_capacity_less_than_0()
+        {
+            //given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "Lot_1",
+                Capacity = -50,
+                Location = "Strict No.1 ",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            //when
+            var response = await client.PostAsync("/parkinglots", content);
+
+            //then
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        }
+
+        [Fact]
         public async Task Should_delete_Parking_Lots_by_id_successfully()
         {
             //given
