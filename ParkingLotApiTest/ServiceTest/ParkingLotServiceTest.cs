@@ -80,12 +80,55 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.Equal(parkingLotDto.Name, parkingLotDtoCreated.Name);
         }
 
+        [Fact]
+        public async Task Should_get_all_parkingLot_by_fiven_pageId_successfully()
+        {
+            //given
+            var context = GetDbContext();
+            AddMultiParkingLot(context);
+            var parkingLotService = new ParkingLotService(context);
+
+            //when
+            List<ParkingLotDto> parkingLotDtoCreated = await parkingLotService.GetAllParkingLotsInPage(1);
+
+            //then
+            Assert.Equal(3, parkingLotDtoCreated.Count);
+        }
+
         public ParkingLotContext GetDbContext()
         {
             var scope = Factory.Services.CreateScope();
             var scopedService = scope.ServiceProvider;
             ParkingLotContext context = scopedService.GetService<ParkingLotContext>();
             return context;
+        }
+
+        public void AddMultiParkingLot(ParkingLotContext context)
+        {
+            ParkingLotDto parkingLotDto1 = new ParkingLotDto()
+            {
+                Name = "ParkingLot1",
+                Capacity = 100,
+                Location = "North street No 1",
+            };
+            ParkingLotDto parkingLotDto2 = new ParkingLotDto()
+            {
+                Name = "ParkingLot2",
+                Capacity = 200,
+                Location = "North street No 2",
+            };
+            ParkingLotDto parkingLotDto3 = new ParkingLotDto()
+            {
+                Name = "ParkingLot3",
+                Capacity = 300,
+                Location = "North street No 3",
+            };
+            var parkingLotService = new ParkingLotService(context);
+            List<ParkingLotDto> parkingLotDtos = new List<ParkingLotDto>() { parkingLotDto1, parkingLotDto2, parkingLotDto3 };
+            foreach(ParkingLotDto parkingLotDto in parkingLotDtos)
+            {
+                parkingLotService.AddOneParkingLot(parkingLotDto);
+            }
         }
     }
 }
