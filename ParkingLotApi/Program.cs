@@ -4,12 +4,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ParkingLotApi.Repository;
+using ParkingLotApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder .Services.AddScoped<ParkingLotServices>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -24,10 +26,12 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ParkingLotContext>();
 
-    if (dbContext.Database.ProviderName.ToLower().Contains("mysql"))
-    {
-        dbContext.Database.Migrate();
-    }
+    //if (dbContext.Database.ProviderName.ToLower().Contains("mysql"))
+    //{
+    //    dbContext.Database.Migrate();
+    //}
+    dbContext.Database.EnsureDeleted();
+    dbContext.Database.EnsureCreated();
 }
 
 // Configure the HTTP request pipeline.
