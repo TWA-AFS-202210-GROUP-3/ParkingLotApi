@@ -26,16 +26,14 @@ namespace ParkingLotApiTest.ControllerTest
 
             var parkingLotDto = this.CreateParkingLotDto("ParkingLot-1", 10);
 
-            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
-            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            StringContent content = this.SerializeParkingDto(parkingLotDto);
             await client.PostAsync("/ParkingLot", content);
 
             var allParkingLotsResponseMessage = await client.GetAsync("/ParkingLot");
             var allParkingLotsString = await allParkingLotsResponseMessage.Content.ReadAsStringAsync();
             var allParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(allParkingLotsString);
-            var returnedParkingLots = allParkingLots.ToList();
 
-            Assert.Single(returnedParkingLots);
+            Assert.Single(allParkingLots);
         }
 
         [Fact]
@@ -53,6 +51,24 @@ namespace ParkingLotApiTest.ControllerTest
             var returnParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
 
             Assert.Equal("ParkingLot-1", returnParkingLot.Name);
+        }
+
+        [Fact]
+        public async Task Should_delete_parking_lot_by_id_success()
+        {
+            var client = this.GetClient();
+            var parkingLotDto = this.CreateParkingLotDto("ParkingLot-1", 0);
+
+            StringContent content = this.SerializeParkingDto(parkingLotDto);
+            var returnedIdMessage = await client.PostAsync("/ParkingLot", content);
+
+            await client.DeleteAsync(returnedIdMessage.Headers.Location);
+
+            var allParkingLotsResponseMessage = await client.GetAsync("/ParkingLot");
+            var allParkingLotsString = await allParkingLotsResponseMessage.Content.ReadAsStringAsync();
+            var allParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(allParkingLotsString);
+
+            Assert.Empty(allParkingLots);
         }
 
         private ParkingLotDto CreateParkingLotDto(string name, int capacity)

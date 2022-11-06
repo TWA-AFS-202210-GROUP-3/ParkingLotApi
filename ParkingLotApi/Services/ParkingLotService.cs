@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ParkingLotApi.Dtos;
@@ -42,6 +43,16 @@ namespace ParkingLotApi.Services
             var matchedParkingLot = parkingLotContext.ParkingLots.FirstOrDefault(x => x.ID == id);
             // 2. convert entity to dto
             return new ParkingLotDto(matchedParkingLot);
+        }
+
+        public async Task DeleteParkingLotById(int id)
+        {
+            // 1. find matched item prepare delete
+            var matchedParkingLot = parkingLotContext.ParkingLots.FirstOrDefault(parkingLot => parkingLot.ID == id);
+
+            parkingLotContext.ParkingLots.Remove(matchedParkingLot);
+
+            await parkingLotContext.SaveChangesAsync();
         }
     }
 }
