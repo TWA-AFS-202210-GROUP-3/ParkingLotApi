@@ -120,7 +120,7 @@ namespace ParkingLotApiTest.ControllerTest
             ParkingLotDto parkingLotDto = new ParkingLotDto()
             {
                 Name = "Lot_2",
-                Capacity = 0,
+                Capacity = 60,
                 Location = "Strict No.1 ",
             };
             ParkingLotDto parkingLotDto2 = new ParkingLotDto()
@@ -143,6 +143,33 @@ namespace ParkingLotApiTest.ControllerTest
             var returnParkinglot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
 
             Assert.Equal("Lot_2", returnParkinglot.Name);
+        }
+
+        [Fact]
+        public async void Should_Update_Information_Of_An_parking_lot()
+        {
+            //given
+            //given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "Lot_3",
+                Capacity = 40,
+                Location = "Strict No.1 ",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var postResponse= await client.PostAsync("/parkinglots", content);
+            //when
+           parkingLotDto.Capacity = 100;
+           var httpContent2 = JsonConvert.SerializeObject(parkingLotDto);
+           StringContent content2 = new StringContent(httpContent2, Encoding.UTF8, MediaTypeNames.Application.Json);
+           var modifiledParkinglotRes = await client.PutAsync(postResponse.Headers.Location,content2);
+           var body = await modifiledParkinglotRes.Content.ReadAsStringAsync();
+            var modifiedParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
+            //then
+            Assert.Equal(HttpStatusCode.OK, modifiledParkinglotRes.StatusCode);
+            Assert.Equal(parkingLotDto.Capacity, modifiedParkingLot.Capacity);
         }
 
 
