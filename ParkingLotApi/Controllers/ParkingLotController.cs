@@ -36,12 +36,10 @@ namespace ParkingLotApi.Controllers
             if (pageIndex.HasValue)
             {
                 return Ok(await parkingLotService.Get15InPage(pageIndex.Value));
-
             }
             else
             {
                 return Ok(await parkingLotService.GetAll());
-
             }
         }
 
@@ -56,6 +54,12 @@ namespace ParkingLotApi.Controllers
         {
             parkingLotService.DeteleByIdAsync(id);
             return this.NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ParkingLotDto>> PutById([FromRoute] int id, ParkingLotDto parkingLotDto)
+        {
+            return await parkingLotService.UpdateCapacityById(id, parkingLotDto);
         }
     }
 }

@@ -93,6 +93,7 @@ namespace ParkingLotApiTest.ControllerTest
             {
                 await PostParkingLot(client, new ParkingLotDto { Name = "parking lot " + i.ToString(), Capacity = 10, Location = "NYC", });
             }
+
             var pageIndex = 2;
 
             // when
@@ -126,6 +127,31 @@ namespace ParkingLotApiTest.ControllerTest
             var body = await getResponse.Content.ReadAsStringAsync();
             var resultParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
             Assert.Equal("parking lot 1", resultParkingLot.Name);
+        }
+
+        [Fact]
+        public async Task Should_update_parking_lot_given_location_successfullyAsync()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "parking lot 1",
+                Capacity = 10,
+                Location = "NYC",
+            };
+            var content = GenerateContent(parkingLotDto);
+            var response = await client.PostAsync("/parkingLot", content);
+            parkingLotDto.Capacity = 15;
+
+            // when
+            var contentNew = GenerateContent(parkingLotDto);
+            var responseNew = await client.PutAsync(response.Headers.Location, contentNew);
+
+            // then
+            var body = await responseNew.Content.ReadAsStringAsync();
+            var parkingLotNew = JsonConvert.DeserializeObject<ParkingLotDto>(body);
+            Assert.Equal(15, parkingLotNew.Capacity);
         }
 
         private async Task PostParkingLot(HttpClient client, ParkingLotDto parkingLotDto)

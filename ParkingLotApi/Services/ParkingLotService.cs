@@ -53,5 +53,12 @@ namespace ParkingLotApi.Services
             parkingLotcontext.ParkingLots.RemoveRange(parkingLotEntityFound);
             await this.parkingLotcontext.SaveChangesAsync();
         }
+
+        public async Task<ActionResult<ParkingLotDto>> UpdateCapacityById(int id, ParkingLotDto parkingLotDto)
+        {
+            var parkingLotEntityFound = this.parkingLotcontext.ParkingLots.FirstOrDefault(_ => _.Id == id);
+            parkingLotEntityFound.Capacity = parkingLotDto.Capacity;
+            return new ParkingLotDto(parkingLotEntityFound);
+        }
     }
 }
