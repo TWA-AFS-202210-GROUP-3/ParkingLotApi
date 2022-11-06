@@ -47,6 +47,14 @@ namespace ParkingLotApi.Service
             return new OkResult();
         }
 
+        public async Task<OrderDto> UpdateOrderInfo(int id, OrderDto order)
+        {
+            OrderEntity orderEntity = await dbContext.orders.FirstOrDefaultAsync(order => order.Id == id);
+            orderEntity.Closedime = (DateTime)order.Closedime;
+            await dbContext.SaveChangesAsync();
+            return new OrderDto(orderEntity);
+        }
+
         public async Task<bool> IsParkingLotAvaliable(string ParkingLotName)
         {
             ParkingLotEntity parkingLotEntity = await dbContext.parkingLots.FirstOrDefaultAsync(parkingLot => parkingLot.Name.Equals(ParkingLotName));

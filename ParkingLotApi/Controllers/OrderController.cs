@@ -37,5 +37,12 @@ namespace ParkingLotApi.Controllers
             return orderService.DeleteAllOrder();
         }
 
+        [HttpPut]
+        [Route("{orderID}")]
+        public async Task<ActionResult<OrderDto>> UpdateParkingLotInfo([FromRoute] int orderID, [FromBody] OrderDto order)
+        {
+            var orderDto = await orderService.UpdateOrderInfo(orderID, order);
+            return Ok(orderDto);
+        }
     }
 }
