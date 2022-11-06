@@ -22,14 +22,9 @@ namespace ParkingLotApiTest.ControllerTest
         [Fact]
         public async Task Should_create_parking_lot_success()
         {
-            var client = GetClient();
+            var client = this.GetClient();
 
-            ParkingLotDto parkingLotDto = new ParkingLotDto()
-            {
-                Capacity = 1,
-                Name = "parkingLot-1",
-                Location = "Beijing",
-            };
+            var parkingLotDto = this.CreateParkingLotDto("ParkingLot-1", 10);
 
             var httpContent = JsonConvert.SerializeObject(parkingLotDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
@@ -43,23 +38,36 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Single(returnedParkingLots);
         }
 
-        /*[Fact]
-        public async Task Should_add_one_parking_lot_success()
+        [Fact]
+        public async Task Should_get_parking_lot_by_id_success()
         {
-            var client = GetClient();
+            var client = this.GetClient();
 
-            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            var parkingLotDto = this.CreateParkingLotDto("ParkingLot-1", 0);
+
+            StringContent content = this.SerializeParkingDto(parkingLotDto);
+            var returnedIdMessage = await client.PostAsync("/ParkingLot", content);
+
+            var parkingLotResponse = await client.GetAsync(returnedIdMessage.Headers.Location);
+            var body = await parkingLotResponse.Content.ReadAsStringAsync();
+            var returnParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
+
+            Assert.Equal("ParkingLot-1", returnParkingLot.Name);
+        }
+
+        private ParkingLotDto CreateParkingLotDto(string name, int capacity)
+        {
+            return new ParkingLotDto()
             {
-                Capacity = 1,
-                Name = "parkingLot-1",
+                Name = name,
                 Location = "Beijing",
+                Capacity = capacity == 0 ? capacity : 10,
             };
+        }
 
-            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
-            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-            var responseMessage = await client.PatchAsync("/ParkingLot", content);
-            var responseString = await responseMessage.Content.ReadAsStringAsync();
-            var responseId = JsonConvert.DeserializeObject<int>(responseString);
-        }*/
+        private StringContent SerializeParkingDto(ParkingLotDto parkingLotDto)
+        {
+            return new StringContent(JsonConvert.SerializeObject(parkingLotDto), Encoding.UTF8, MediaTypeNames.Application.Json);
+        }
     }
 }
