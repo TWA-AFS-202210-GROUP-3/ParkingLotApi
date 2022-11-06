@@ -15,7 +15,7 @@ namespace ParkingLotApiTest
             Name = parkingLotEntity.Name;
             Capacity = parkingLotEntity.Capacity;
             Location = parkingLotEntity.Location;
-            CreateTime = parkingLotEntity.CreateTime;
+            CreateTime = DateTime.Now;
         }
 
         public Guid Id { get; set; }
@@ -30,7 +30,8 @@ namespace ParkingLotApiTest
 
         public ParkingLotEntity ToEntity()
         {
-            return new ParkingLotEntity() {
+            return new ParkingLotEntity() 
+            {
                 Name = this.Name,
                 Capacity = this.Capacity,
                 Location = this.Location,
