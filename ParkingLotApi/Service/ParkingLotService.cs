@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using ParkingLotApi.Dto;
 using ParkingLotApi.Entity;
 using ParkingLotApi.Repository;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ParkingLotApi.Service
@@ -37,6 +41,46 @@ namespace ParkingLotApi.Service
             ParkingLotEntity parkingLotEntity = await dbContext.parkingLots.FirstOrDefaultAsync(company => company.Id == id);
 
             return new ParkingLotDto(parkingLotEntity);
+        }
+
+        public async Task<List<ParkingLotDto>> GetAllParkingLotsInPage(int pageId)
+        {
+            List<ParkingLotDto> parkingLotDtos = new List<ParkingLotDto>();
+            if (pageId > 0)
+            {
+                int pageSize = 15;
+                int parkingLotsCount = dbContext.parkingLots.Count();
+                int skipCount = pageSize * (pageId - 1);
+                if (parkingLotsCount > skipCount)
+                {
+                    int willBeAddedCount = parkingLotsCount - skipCount < 15 ? parkingLotsCount - skipCount : 15;
+                    var parkingEntityFromDB = dbContext.parkingLots.ToList();
+                    var parkingLotDto = parkingEntityFromDB.Select(parkingEntity => new ParkingLotDto(parkingEntity)).ToList();
+                    for (int i = skipCount; i < willBeAddedCount; i++)
+                    {
+                        parkingLotDtos.Add(parkingLotDto[i]);
+                    }
+                }
+            }
+
+            return parkingLotDtos;
+        }
+
+        public async Task<List<ParkingLotDto>> GetAll()
+        {
+            var parkingEntityFromDB = dbContext.parkingLots.ToList();
+            var parkingLotDto = parkingEntityFromDB.Select(parkingEntity => new ParkingLotDto(parkingEntity)).ToList();
+            return parkingLotDto;
+        }
+
+        public async Task<ActionResult> DeleteAllParkingLot()
+        {
+            foreach (ParkingLotEntity parkingLot in dbContext.parkingLots)
+            {
+                dbContext.parkingLots.Remove(parkingLot);
+            }
+            await dbContext.SaveChangesAsync();
+            return new OkResult();
         }
     }
 }

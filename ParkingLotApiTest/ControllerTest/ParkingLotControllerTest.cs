@@ -11,6 +11,7 @@ namespace ParkingLotApiTest.ControllerTest
     using System.Net.Http;
     using System.Text;
     using System.Net;
+    using System.Collections.Generic;
 
     public class ParkingLotControllerTest
     {
@@ -24,6 +25,7 @@ namespace ParkingLotApiTest.ControllerTest
             // given
             var factory = new WebApplicationFactory<Program>();
             var httpClient = factory.CreateClient();
+            await httpClient.DeleteAsync("/ParkingLots");
 
             ParkingLotDto parkingLotDto = new ParkingLotDto()
             {
@@ -50,6 +52,7 @@ namespace ParkingLotApiTest.ControllerTest
             // given
             var factory = new WebApplicationFactory<Program>();
             var httpClient = factory.CreateClient();
+            await httpClient.DeleteAsync("/ParkingLots");
 
             ParkingLotDto parkingLotDto = new ParkingLotDto()
             {
@@ -66,6 +69,43 @@ namespace ParkingLotApiTest.ControllerTest
 
             // then
             Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task Should_get_all_parkingLots_in_one_page_given_pageID_successfully()
+        {
+            // given
+            var factory = new WebApplicationFactory<Program>();
+            var httpClient = factory.CreateClient();
+            await httpClient.DeleteAsync("/ParkingLots");
+
+            ParkingLotDto parkingLotDto1 = new ParkingLotDto()
+            {
+                Name = "ParkingLot1",
+                Capacity = 100,
+                Location = "North street No 1",
+            };
+            ParkingLotDto parkingLotDto2 = new ParkingLotDto()
+            {
+                Name = "ParkingLot1",
+                Capacity = 100,
+                Location = "North street No 1",
+            };
+            List<ParkingLotDto> parkingLotDtos = new List<ParkingLotDto>() { parkingLotDto1, parkingLotDto2 };
+            foreach(var parkingLotDto in parkingLotDtos)
+            {
+                var parkingLotJson = JsonConvert.SerializeObject(parkingLotDto);
+                var requestBody = new StringContent(parkingLotJson, Encoding.UTF8, "application/json");
+                var postResponse = await httpClient.PostAsync("/ParkingLots", requestBody);
+            }
+
+            // when
+            var GetPageResponse = await httpClient.GetAsync("/ParkingLots?pageId=1");
+
+            // then
+            var getResponseBody = await GetPageResponse.Content.ReadAsStringAsync();
+            var parkingLotsInPageId = JsonConvert.DeserializeObject<List<ParkingLotDto>>(getResponseBody);
+            Assert.Equal(2, parkingLotsInPageId.Count);
         }
     }
 }

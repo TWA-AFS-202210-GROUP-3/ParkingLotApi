@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ParkingLotApi.Dto;
 using ParkingLotApi.Service;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 [ApiController]
@@ -17,17 +18,26 @@ public class ParkingLotController : ControllerBase
         this.parkingLotService = parkingLotService;
     }
 
-    [HttpGet]
-    public string Get()
-    {
-        return "Hello World";
-    }
-
     [HttpGet("{parkingLotId}")]
     public async Task<ActionResult<ParkingLotDto>> GetById(int parkingLotId)
     {
         var parkingLotDto = await parkingLotService.GetById(parkingLotId);
         return Ok(parkingLotDto);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ParkingLotDto>> GetAllParkingLotsInPage([FromQuery] int? pageId)
+    {
+        if (pageId == null)
+        {
+            List<ParkingLotDto> parkingLotDto = await parkingLotService.GetAll();
+            return Ok(parkingLotDto);
+        }
+        else
+        {
+            List<ParkingLotDto> parkingLotDto = await parkingLotService.GetAllParkingLotsInPage((int)pageId);
+            return Ok(parkingLotDto);
+        }
     }
 
     [HttpPost]
@@ -42,5 +52,11 @@ public class ParkingLotController : ControllerBase
     public Task<ActionResult> DeleteParkingLot([FromRoute] int parkingLotID)
     {
         return parkingLotService.DeleteOneParkingLot(parkingLotID);
+    }
+
+    [HttpDelete]
+    public Task<ActionResult> DeleteAllParkingLot()
+    {
+        return parkingLotService.DeleteAllParkingLot();
     }
 }
