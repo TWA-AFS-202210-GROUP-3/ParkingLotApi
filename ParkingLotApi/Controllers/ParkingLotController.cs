@@ -21,13 +21,18 @@ namespace ParkingLotApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
         {
-            if (parkingLotDto.Capacity < 0)
-            {
-                throw new Exception("Parking Lot's capacity cannot be minus.");
-            }
+            CheckCapacity(parkingLotDto.Capacity);
 
             var id = await parkingLotService.AddParkingLotAsync(parkingLotDto);
             return CreatedAtAction(nameof(GetById), new { id = id }, parkingLotDto);
+        }
+
+        private static void CheckCapacity(int capacity)
+        {
+            if (capacity < 0)
+            {
+                throw new Exception("Parking Lot's capacity cannot be minus.");
+            }
         }
 
         [HttpGet]
@@ -59,7 +64,21 @@ namespace ParkingLotApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ParkingLotDto>> PutById([FromRoute] int id, ParkingLotDto parkingLotDto)
         {
+            CheckCapacity(parkingLotDto.Capacity);
             return await parkingLotService.UpdateCapacityById(id, parkingLotDto);
+        }
+
+        [HttpPost("{id}/orders")]
+        public async Task<ActionResult<OrderDto>> AddOrderToParkingLot([FromRoute] int id, OrderDto orderDto)
+        {
+            var orderId = await parkingLotService.AddOrderToParkingLot(id, orderDto);
+            return CreatedAtAction(nameof(GetOrderById), new { id = id, orderId = orderId }, orderDto);
+        }
+
+        [HttpGet("{id}/orders/{orderId}")]
+        public async Task<ActionResult<OrderDto>> GetOrderById([FromRoute] int id, int orderId)
+        {
+            return Ok(await parkingLotService.GetOrderById(orderId));
         }
     }
 }

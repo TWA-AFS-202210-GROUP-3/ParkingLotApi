@@ -10,7 +10,8 @@ namespace ParkingLotApi.Repository
         {
         }
 
-
         public DbSet<ParkingLotEntity> ParkingLots { get; set; }
+
+        public DbSet<OrderEntity> Orders { get; set; }
     }
 }

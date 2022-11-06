@@ -60,5 +60,19 @@ namespace ParkingLotApi.Services
             parkingLotEntityFound.Capacity = parkingLotDto.Capacity;
             return new ParkingLotDto(parkingLotEntityFound);
         }
+
+        public async Task<OrderDto> GetOrderById(int orderId)
+        {
+            return new OrderDto(parkingLotcontext.Orders.Find(orderId));
+        }
+
+        public async Task<int> AddOrderToParkingLot(int parkingLotId, OrderDto orderDto)
+        {
+            var parkingLotFound = parkingLotcontext.ParkingLots.Find(parkingLotId);
+            parkingLotFound.Orders.Add(orderDto.ToEntity());
+            await this.parkingLotcontext.SaveChangesAsync();
+
+            return parkingLotFound.Orders.Find(_ => _.OrderNumber == orderDto.OrderNumber).Id;
+        }
     }
 }

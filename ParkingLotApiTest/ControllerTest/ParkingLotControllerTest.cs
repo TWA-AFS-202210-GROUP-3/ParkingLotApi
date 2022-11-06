@@ -142,16 +142,48 @@ namespace ParkingLotApiTest.ControllerTest
             };
             var content = GenerateContent(parkingLotDto);
             var response = await client.PostAsync("/parkingLot", content);
-            parkingLotDto.Capacity = 15;
 
             // when
-            var contentNew = GenerateContent(parkingLotDto);
-            var responseNew = await client.PutAsync(response.Headers.Location, contentNew);
+            var getResponse = await client.GetAsync(response.Headers.Location);
+
+            // then
+            var body = await getResponse.Content.ReadAsStringAsync();
+            var resultParkingLot = JsonConvert.DeserializeObject<ParkingLotDto>(body);
+            Assert.Equal("parking lot 1", resultParkingLot.Name);
+        }
+
+        [Fact]
+        public async Task Should_post_a_order_successfully_given_a_parking_lotAsync()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "parking lot 1",
+                Capacity = 10,
+                Location = "NYC",
+            };
+            var content = GenerateContent(parkingLotDto);
+            var response = await client.PostAsync("/parkingLot", content);
+
+            OrderDto orderDto = new OrderDto
+            {
+                OrderNumber = "1",
+                ParkingLotName = "parking lot 1",
+                PlateNumber = "123456",
+                CreationTime = "2022/11/4 14:23",
+                CloseTime = "",
+                OrderStatus = "open",
+            };
+            var orderContent = GenerateContent(orderDto);
+
+            // when
+            var responseNew = await client.PostAsync(response.Headers.Location + "/orders", orderContent);
 
             // then
             var body = await responseNew.Content.ReadAsStringAsync();
-            var parkingLotNew = JsonConvert.DeserializeObject<ParkingLotDto>(body);
-            Assert.Equal(15, parkingLotNew.Capacity);
+            var order = JsonConvert.DeserializeObject<OrderDto>(body);
+            Assert.Equal("1", order.OrderNumber);
         }
 
         private async Task PostParkingLot(HttpClient client, ParkingLotDto parkingLotDto)
@@ -167,7 +199,7 @@ namespace ParkingLotApiTest.ControllerTest
             return JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
         }
 
-        private StringContent GenerateContent(ParkingLotDto parkingLotDto)
+        private StringContent GenerateContent(object parkingLotDto)
         {
             var httpContent = JsonConvert.SerializeObject(parkingLotDto);
             return new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
