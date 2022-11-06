@@ -22,7 +22,7 @@ namespace ParkingLotApi.Dtos
 
         public string CloseTime { get; set; }
 
-        public bool Status { get; set; }
+        public string Status { get; set; }
 
         public ParkingOrderEntity ToEntity()
         {

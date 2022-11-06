@@ -19,13 +19,6 @@ namespace ParkingLotApi.Controllers
             this.parkingLotService = parkingLotService;
         }
 
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<ParkingLotDto>>> List()
-        // {
-        //     var parkingLotDtos = await this.parkingLotService.GetAll();
-        //
-        //     return Ok(parkingLotDtos);
-        // }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ParkingLotDto>> GetById(int id)
@@ -68,7 +61,7 @@ namespace ParkingLotApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ParkingLotDto>> UpdateParkingLot([FromRoute] int id, ParkingLotDto parkingLotDto)
         {
-            var updatedParkingLotDto = await this.parkingLotService.ExpandCapacity(id, parkingLotDto);
+            var updatedParkingLotDto = await this.parkingLotService.UpdateParkingLot(id, parkingLotDto);
 
             return Ok(updatedParkingLotDto);
         }

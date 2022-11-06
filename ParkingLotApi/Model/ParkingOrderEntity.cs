@@ -10,7 +10,7 @@
         public string PlateNumber { get; set; }
         public string CreateTime { get; set; }
         public string CloseTime { get; set; }
-        public bool Status { get; set; }
+        public string Status { get; set; }
 
     }
 }

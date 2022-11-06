@@ -51,10 +51,10 @@ namespace ParkingLotApi.Services
             return parkingLotsInPage;
         }
 
-        public async Task<int> AddParkingLot(ParkingLotDto companyDto)
+        public async Task<int> AddParkingLot(ParkingLotDto parkingLotDto)
         {
             // 1. convert dto to entity
-            ParkingLotEntity parkingLotEntity = companyDto.ToEntity();
+            ParkingLotEntity parkingLotEntity = parkingLotDto.ToEntity();
 
             // 2. save entity to db
             await parkingLotDbContext.ParkingLots.AddAsync(parkingLotEntity);
@@ -72,16 +72,16 @@ namespace ParkingLotApi.Services
             await parkingLotDbContext.SaveChangesAsync();
         }
 
-        public async Task<ParkingLotDto> ExpandCapacity(int id, ParkingLotDto newParkingLotDto)
+
+        public async Task<ParkingLotDto> UpdateParkingLot(int id, ParkingLotDto newParkingLotDto)
         {
-            var parkingLot = await GetById(id);
-            parkingLot.Capacity = newParkingLotDto.Capacity;
-            parkingLotDbContext.ParkingLots.Update(parkingLot.ToEntity());
+            var foundparking = parkingLotDbContext.ParkingLots.Include(parkingLot => parkingLot.Order)
+                .FirstOrDefault(_ => _.ID == id);
+            foundparking = newParkingLotDto.ToEntity();
+
             await parkingLotDbContext.SaveChangesAsync();
-
-            return parkingLot;
+            return new ParkingLotDto(foundparking);
         }
-
 
     }
 }
