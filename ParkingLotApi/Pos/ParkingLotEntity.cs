@@ -1,4 +1,6 @@
-﻿namespace ParkingLotApi.Repository
+﻿using System;
+
+namespace ParkingLotApi.Repository
 {
     public class ParkingLotEntity
     {
@@ -13,5 +15,7 @@
         public int Capacity { get; set; }
 
         public string Location { get; set; }
+
+        public DateTime? CreateTime { get; set; }
     }
 }

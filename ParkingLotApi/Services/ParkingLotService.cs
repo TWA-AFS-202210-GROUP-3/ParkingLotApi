@@ -33,7 +33,18 @@ namespace ParkingLotApi.Services
                 .ToList();
 
             // convert entity to dto(select类似于map)
-            return companies.Select(ParkingLotEntity => new ParkingLotDto(ParkingLotEntity)).ToList();
+            return companies.Select(parkingLotEntity => new ParkingLotDto(parkingLotEntity)).ToList();
+        }
+
+        public async Task<List<ParkingLotDto>> GetParkingLotByPage(int pageNumber)
+        {
+            int pageSize = 15;
+            var parkinglot = this.parkingLotContext.ParkingLots
+                .Skip((pageNumber - 1) * pageSize).Take(pageSize)
+                .OrderBy(_ => _.CreateTime)
+                .Select(parkingLotEntity => new ParkingLotDto(parkingLotEntity)).ToList();
+
+            return parkinglot;
         }
 
         public async Task<ParkingLotDto> GetParkingLotById(long id)

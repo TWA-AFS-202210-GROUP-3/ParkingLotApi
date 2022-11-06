@@ -67,6 +67,31 @@ public class ParkingLotServiceTest : TestBase
     }
 
     [Fact]
+    public async Task Should_get_parking_lot_list_by_page_with_15_in_each_page()
+    {
+        // given
+        var context = GetParkingLotContext();
+        ParkingLotService parkingLotService = new ParkingLotService(context);
+        for (var i = 0; i < 32; i++)
+        {
+            ParkingLotDto parkingLotDto = new ParkingLotDto()
+            {
+                Name = "CUP_NO.1",
+                Capacity = 100,
+                Location = "ZHONGSHI Road",
+            };
+
+            await parkingLotService.AddNewParkingLot(parkingLotDto);
+        }
+
+        // when
+        var parkingLotInPage = await parkingLotService.GetParkingLotByPage(3);
+
+        // then
+        Assert.Equal(2, parkingLotInPage.Count());
+    }
+
+    [Fact]
     public async Task Should_delete_parkinglot_by_id_success_via_service()
     {
         var context = GetParkingLotContext();
