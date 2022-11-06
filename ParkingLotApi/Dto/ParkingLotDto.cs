@@ -1,4 +1,4 @@
-﻿using ParkingLotApi.Entity;
+﻿using ParkingLotApi.Model;
 
 namespace ParkingLotApi.Dto
 {
@@ -10,9 +10,9 @@ namespace ParkingLotApi.Dto
 
         public ParkingLotDto(ParkingLotEntity parkingLotEntity)
         {
-            Name = parkingLotEntity.Name;
-            Capacity = parkingLotEntity.Capacity;
-            Location = parkingLotEntity.Location;
+            this.Name = parkingLotEntity.Name;
+            this.Capacity = parkingLotEntity.Capacity;
+            this.Location = parkingLotEntity.Location;
         }
 
         public string Name { get; set; }

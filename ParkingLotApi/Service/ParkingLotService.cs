@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using ParkingLotApi.Dto;
-using ParkingLotApi.Entity;
+using ParkingLotApi.Model;
 using ParkingLotApi.Repository;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿namespace ParkingLotApi.Entity
+﻿namespace ParkingLotApi.Model
 {
     public class ParkingLotEntity
     {
