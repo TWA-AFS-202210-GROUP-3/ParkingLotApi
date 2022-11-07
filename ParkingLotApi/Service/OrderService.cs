@@ -65,7 +65,7 @@ namespace ParkingLotApi.Service
             int used = 0;
             foreach (OrderEntity order in dbContext.orders)
             {
-                if (order.ParkingLotName.Equals(ParkingLotName))
+                if (order.ParkingLotName.Equals(ParkingLotName) && order.Status == true)
                 {
                     used++;
                 }
