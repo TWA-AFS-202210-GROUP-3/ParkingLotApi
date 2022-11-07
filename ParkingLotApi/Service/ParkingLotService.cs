@@ -27,6 +27,11 @@ namespace ParkingLotApi.Service
                 return 0;
             }
 
+            if(dbContext.parkingLots.Select(item=>item.Name == parkingLotDto.Name) != null) //parkingLot name unique
+            {
+                return 0;
+            }
+
             ParkingLotEntity parkingLotEntity = parkingLotDto.ToEntity();
             await dbContext.parkingLots.AddAsync(parkingLotEntity);
             await dbContext.SaveChangesAsync();
