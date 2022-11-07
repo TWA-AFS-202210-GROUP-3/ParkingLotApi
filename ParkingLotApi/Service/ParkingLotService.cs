@@ -22,6 +22,11 @@ namespace ParkingLotApi.Service
 
         public async Task<int> AddOneParkingLot(ParkingLotDto parkingLotDto)
         {
+            if (parkingLotDto.Capacity < 0)
+            {
+                return 0;
+            }
+
             ParkingLotEntity parkingLotEntity = parkingLotDto.ToEntity();
             await dbContext.parkingLots.AddAsync(parkingLotEntity);
             await dbContext.SaveChangesAsync();

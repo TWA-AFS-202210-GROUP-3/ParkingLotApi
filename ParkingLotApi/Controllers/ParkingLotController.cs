@@ -44,7 +44,7 @@ public class ParkingLotController : ControllerBase
     public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
     {
         var parkingLotID = await parkingLotService.AddOneParkingLot(parkingLotDto);
-        return CreatedAtAction(nameof(GetById), new { parkingLotId = parkingLotID }, parkingLotDto);
+        return parkingLotID == 0 ? CreatedAtAction(nameof(GetById), new { parkingLotId = parkingLotID }, parkingLotDto) : BadRequest();
     }
 
     [HttpDelete]
