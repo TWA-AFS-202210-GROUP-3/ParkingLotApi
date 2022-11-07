@@ -27,7 +27,8 @@ namespace ParkingLotApi.Service
                 return 0;
             }
 
-            if(dbContext.parkingLots.Select(item=>item.Name == parkingLotDto.Name) != null) //parkingLot name unique
+            ParkingLotEntity count = await dbContext.parkingLots.FirstOrDefaultAsync(item => item.Name == parkingLotDto.Name);
+            if (count != null) //parkingLot name unique
             {
                 return 0;
             }
