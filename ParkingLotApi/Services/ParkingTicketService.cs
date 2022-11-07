@@ -32,7 +32,11 @@ namespace ParkingLotApi.Services
             }
 
             ParkingTicketEntity parkingTicketEntity = parkingTicketDto.ToEntity();
+            parkingLotContext.ParkingTickets.Add(parkingTicketEntity);
+
             matchedParkingLot.ParkingTickets.Add(parkingTicketEntity);
+            parkingLotContext.ParkingLots.Update(matchedParkingLot);
+
             await parkingLotContext.SaveChangesAsync();
 
             return parkingTicketEntity.ID;
