@@ -52,6 +52,7 @@ namespace ParkingLotApi.Service
         {
             OrderEntity orderEntity = await dbContext.orders.FirstOrDefaultAsync(order => order.Id == id);
             orderEntity.Closedime = (DateTime)order.Closedime;
+            orderEntity.Status = false;
             await dbContext.SaveChangesAsync();
             return new OrderDto(orderEntity);
         }
